@@ -1,0 +1,325 @@
+.page {
+  padding: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: 0.2px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  opacity: 0.78;
+  line-height: 1.35;
+}
+
+/* ✅ cards */
+.card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 16px 0;
+  box-sizing: border-box;
+}
+
+.sectionTitle {
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
+/* ✅ IMPORTANT: allow grid children to shrink */
+.formRow,
+.field,
+.addRow,
+.grid,
+.predCard,
+.tableWrap,
+.chartCard {
+  min-width: 0;
+}
+
+/* ✅ controls layout: more stable, no overflow */
+.formRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 12px;
+  opacity: 0.78;
+}
+
+/* ✅ inputs */
+.select,
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: inherit;
+  padding: 10px 12px;
+  border-radius: 12px;
+  outline: none;
+}
+
+.select:focus,
+.input:focus {
+  border-color: rgba(14,203,129,0.55);
+  box-shadow: 0 0 0 3px rgba(14,203,129,0.12);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: end;
+  min-width: 0;
+}
+
+/* ✅ pills */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(14,203,129,0.12);
+  border: 1px solid rgba(14,203,129,0.35);
+  font-size: 12px;
+  max-width: 100%;
+}
+
+.pillX {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.85;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.pillX:hover { opacity: 1; }
+
+/* ✅ add row: prevent overflow */
+.addRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+  gap: 10px;
+  margin-top: 10px;
+  min-width: 0;
+}
+
+/* ✅ results grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+.predCard {
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.predTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.predSym {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  white-space: nowrap;
+}
+
+.bull { background: rgba(14,203,129,0.15); border-color: rgba(14,203,129,0.45); }
+.bear { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.45); }
+.neutral { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.45); }
+
+/* ✅ metric cards */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+.metric {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 10px;
+  min-width: 0;
+}
+
+.mLabel {
+  font-size: 12px;
+  opacity: 0.72;
+}
+
+.mValue {
+  font-weight: 900;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asOf {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+/* ✅ drivers */
+.drivers { margin-top: 12px; }
+.drTitle { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
+
+.driverList {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  opacity: 0.9;
+  overflow-wrap: anywhere;
+}
+
+/* ✅ table */
+.tableWrap {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: 14px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 720px; /* allow scroll instead of breaking layout */
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.empty {
+  text-align: center;
+  opacity: 0.7;
+  padding: 18px;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  opacity: 0.92;
+  overflow-wrap: anywhere;
+}
+
+/* ✅ chart */
+.chartCard {
+  background: rgba(15,18,24,0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 16px;
+  margin: 16px 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.chartHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.chartMeta {
+  font-size: 12px;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.chartWrap {
+  overflow: hidden; /* stops svg bleeding outside */
+  border-radius: 14px;
+  max-width: 100%;
+}
+
+.chartEmpty { padding: 18px; opacity: 0.75; font-size: 13px; }
+
+/* ✅ responsive */
+@media (max-width: 980px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .addRow {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    justify-content: flex-start;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chartHead {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chartMeta {
+    white-space: normal;
+  }
+}

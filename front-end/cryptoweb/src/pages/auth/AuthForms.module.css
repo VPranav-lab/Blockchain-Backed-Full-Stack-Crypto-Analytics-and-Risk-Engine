@@ -1,0 +1,375 @@
+/* compact Binance-ish blocks inside AuthShell card */
+
+.topRow {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.reward {
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: radial-gradient(600px 120px at 20% 30%, rgba(99,102,241,.22), transparent 60%),
+              rgba(255,255,255,.05);
+}
+
+.rewardTitle {
+  font-weight: 900;
+  letter-spacing: -0.2px;
+}
+
+.rewardText {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(231,232,238,.70);
+}
+
+.miniRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.chip {
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: rgba(231,232,238,.85);
+}
+
+.qrCard {
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.qrBox {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,.20);
+  display: grid;
+  place-items: center;
+  color: rgba(231,232,238,.55);
+  font-size: 11px;
+}
+
+.qrText {
+  display: grid;
+  gap: 2px;
+}
+
+.qrTitle {
+  font-weight: 900;
+}
+
+.qrSub {
+  font-size: 12px;
+  color: rgba(231,232,238,.65);
+}
+
+.rowBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2px;
+  font-size: 13px;
+  opacity: .92;
+}
+
+.check {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.linkBtn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: rgba(34, 211, 238, 0.95);
+  font-weight: 800;
+}
+
+.linkBtn:hover { text-decoration: underline; }
+
+.footer {
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(231,232,238,.70);
+}
+
+.link {
+  color: rgba(34, 211, 238, 0.95);
+  text-decoration: none;
+  font-weight: 800;
+}
+.link:hover { text-decoration: underline; }
+
+/* Upload section */
+.sectionTitle {
+  margin-top: 6px;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+}
+
+.sectionSub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: rgba(231,232,238,.65);
+}
+
+.uploadGrid {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.uploadRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .uploadRow { grid-template-columns: 1fr; }
+}
+
+.fileBox {
+  border-radius: 14px;
+  border: 1px dashed rgba(255,255,255,.18);
+  background: rgba(255,255,255,.04);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.fileTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.fileLabel {
+  font-size: 12px;
+  color: rgba(231,232,238,.70);
+  font-weight: 800;
+}
+
+.fileHint {
+  font-size: 12px;
+  color: rgba(231,232,238,.55);
+}
+
+.fileBtn {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(15,23,42,.55);
+  color: rgba(231,232,238,.92);
+  padding: 10px 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.fileBtn:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.preview {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  overflow: hidden;
+  background: rgba(0,0,0,.22);
+}
+
+.preview img {
+  display: block;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.metaLine {
+  font-size: 12px;
+  color: rgba(231,232,238,.60);
+}
+
+.dangerText {
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.leftRow {
+  justify-content: flex-start;
+}
+
+.errorInline {
+  font-size: 12px;
+  color: var(--danger);
+}
+/* Stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 12px;
+}
+
+.step {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+
+.stepDone {
+  border-color: rgba(34,211,238,.28);
+  background: rgba(34,211,238,.10);
+}
+
+.stepActive {
+  border-color: rgba(34,197,94,.35);
+  background: rgba(34,197,94,.12);
+}
+
+.stepLine {
+  height: 2px;
+  width: 36px;
+  background: rgba(255,255,255,.12);
+  border-radius: 999px;
+}
+
+.stepText { display: grid; line-height: 1.1; }
+.stepTitle { font-weight: 900; }
+.stepSub { font-size: 12px; color: rgba(231,232,238,.65); }
+
+/* Select */
+.selectWrap { display: grid; gap: 6px; }
+.selectLabel { font-size: 12px; color: var(--muted); }
+.selectHint { font-size: 12px; color: rgba(231,232,238,.55); }
+
+.select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(15,23,42,.85);
+  color: var(--text);
+  outline: none;
+}
+.select:focus{
+  border-color: rgba(96,165,250,.55);
+  box-shadow: 0 0 0 3px rgba(96,165,250,.12);
+}
+
+.topMeta {
+  display: grid;
+  gap: 10px;
+  margin: 6px 0 12px;
+}
+
+.metaRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  background: rgba(34, 211, 238, 0.10);
+  color: rgba(200, 250, 255, 0.95);
+}
+
+.badgeSoft {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(231, 232, 238, 0.88);
+}
+
+.metaNote {
+  font-size: 12px;
+  color: rgba(231, 232, 238, 0.62);
+  margin-left: 2px;
+}
+
+/* compact stepper (aligns with KYC page style) */
+.stepperMini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stepDot {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+
+.stepDotActive {
+  border-color: rgba(34,197,94,.35);
+  background: rgba(34,197,94,.12);
+}
+
+.stepDotNext {
+  opacity: .55;
+}
+
+.stepLineMini {
+  height: 2px;
+  width: 36px;
+  background: rgba(255,255,255,.12);
+  border-radius: 999px;
+}
+
+.stepTextMini {
+  display: grid;
+  line-height: 1.1;
+}
+
+.stepTitleMini {
+  font-weight: 900;
+}
+
+.stepSubMini {
+  font-size: 12px;
+  color: rgba(231,232,238,.65);
+}
+

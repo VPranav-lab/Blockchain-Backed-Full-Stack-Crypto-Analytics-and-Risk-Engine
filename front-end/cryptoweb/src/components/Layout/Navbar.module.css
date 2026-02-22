@@ -1,0 +1,149 @@
+/* src/components/Layout/Navbar.module.css */
+
+/* GLOBAL RESET FOR NAVBAR TO PREVENT OVERFLOW */
+* {
+  box-sizing: border-box;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  
+  /* Glassmorphism */
+  background: rgba(7, 8, 22, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.nav {
+  /* CRITICAL FIX: Width 100% with padding included */
+  width: 100%;
+  height: 72px;
+  max-width: 1440px; /* Limits width on huge screens */
+  margin: 0 auto;    /* Centers it */
+  padding: 0 24px;   /* Safe space on sides */
+  
+  /* FLEXBOX LAYOUT (Safer than Grid) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+}
+
+/* --- LEFT: BRAND --- */
+.left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Prevents logo from being squished */
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.logoDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-b);
+  box-shadow: 0 0 12px var(--accent-b);
+}
+
+.brandText {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+  white-space: nowrap; /* Prevents text wrapping */
+}
+
+/* --- CENTER: LINKS --- */
+.center {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Tighter gap to prevent overflow */
+  
+  /* Background Pill */
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  
+  /* Responsive: Hide centered links if screen is too small */
+  /* You can remove this media query if you want them always visible */
+  @media (max-width: 1000px) {
+    display: none; 
+  }
+}
+
+.link, .linkBtn {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 14px; /* Reduced padding slightly */
+  border-radius: 8px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.link:hover, .linkBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- RIGHT: AUTH --- */
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.logoutBtn {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.loginBtn {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
+.registerBtn {
+  background: linear-gradient(135deg, rgba(34, 197, 94, .92), rgba(96, 165, 250, .85));
+  color: #000;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}

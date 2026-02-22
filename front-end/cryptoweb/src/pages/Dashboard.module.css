@@ -1,0 +1,466 @@
+/* Dashboard.module.css — FINAL (overlay + long/short/trend fixed)
+   ✅ Keeps your exact design
+   ✅ Removes duplicate/conflicting draw CSS
+   ✅ Ensures overlay sits ABOVE chart/canvas
+*/
+
+.shell{
+  display:grid;
+  gap: 12px;
+  padding: 12px;
+  color: rgba(255,255,255,.92);
+}
+
+/* NAV */
+.nav{
+  position: relative;
+  background: rgba(17,24,39,.72);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.24);
+  backdrop-filter: blur(10px);
+  min-height: calc(100vh - 24px);
+  overflow: hidden;
+}
+
+.navTop{
+  display:flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 10px 8px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.iconBtn{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  color: rgba(255,255,255,.92);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.navHead{ display:flex; flex-direction: column; gap: 2px; }
+.navTitle{
+  font-size: 11px;
+  letter-spacing: .6px;
+  opacity: .86;
+  text-transform: uppercase;
+  font-weight: 950;
+}
+.navSub{ font-size: 11px; opacity: .60; }
+
+.searchRow{ padding: 10px; }
+.search{
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.14);
+  color: rgba(255,255,255,.92);
+  outline: none;
+}
+.search::placeholder{ color: rgba(255,255,255,.45); }
+
+/* WATCHLIST */
+.navList{
+  display:grid;
+  gap: 8px;
+  padding: 10px;
+  overflow-x: hidden;
+  height: calc(100vh - 24px - 34px - 10px - 56px);
+}
+
+.navList::-webkit-scrollbar{ width: 10px; }
+.navList::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.10);
+  border-radius: 999px;
+  border: 2px solid rgba(17,24,39,.72);
+}
+
+.rowWrap{
+  position: relative;
+  border-radius: 12px;
+}
+
+.rowActive .rowMain{
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.06);
+}
+
+.rowMain{
+  width: 100%;
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.12);
+  cursor:pointer;
+  min-width: 0;
+  
+
+  transition: transform .08s ease, border-color .12s ease, background .12s ease;
+}
+
+.rowMain:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.16);
+  background: rgba(255,255,255,.04);
+}
+
+.rowLeft{ display:flex; flex-direction: column; gap: 6px;  max-width: 140px; min-width: 0;}
+.symLine{ display:flex; align-items: baseline; gap: 8px; }
+
+.sym{
+  font-weight: 1050;
+  font-size: 13px;
+  color: rgba(255,255,255,.96);
+  letter-spacing: .2px;
+  max-width: 75px;        /* 🔑 limit symbol width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.quote{
+  font-size: 11px;
+  opacity: .70;
+  color: rgba(255,255,255,.72);
+}
+
+.rowRight{ 
+  text-align:right;
+  min-width: 110px;
+  flex-shrink: 0;
+  flex-shrink: 0; 
+}
+.px{ 
+  font-weight: 1100; 
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pct{ font-size: 11px; opacity: .70; margin-top: 2px; }
+
+/* sparkline */
+.sparkWrap{ height: 22px; }
+.spark{ display:block; }
+.sparkColor{ display:inline-flex; }
+.sparkEmpty{ width: 80px; height: 22px; opacity: .30; }
+
+/* resizer */
+.dragHandle{
+  position:absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.06));
+}
+
+/* MAIN */
+.main{
+  display:grid;
+  gap: 12px;
+  align-content: start;
+}
+.chartControls{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  gap:12px;
+  margin: 10px 0 12px;
+}
+
+
+.ctrlLabel{
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.intervalSelect{
+  width: 140px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(17,24,39,.60);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  outline: none;
+}
+.intervalSelect:hover{
+  border-color: rgba(255,255,255,.18);
+}
+
+.intervalSelect:focus{
+  border-color: rgba(99,102,241,.70);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.22);
+}
+
+.intervalSelect option{
+  background: #0b1220;
+  color: rgba(255,255,255,.92);
+}
+
+/* Header */
+.header{
+  background: rgba(17,24,39,.55);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
+
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hLeft{ display:flex; flex-direction: column; gap: 8px; }
+.pairLine{
+  display:flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pair{ font-size: 16px; font-weight: 1150; }
+
+.badge{
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  opacity: .92;
+}
+
+.big{ font-size: 18px; font-weight: 1200; }
+.chg{ font-size: 12px; font-weight: 1050; opacity: .95; }
+
+.ohlcRow{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.ohlcHint{ font-size: 11px; opacity: .55; }
+.ohlcLabel{ font-size: 11px; opacity: .55; }
+.ohlcVal{ font-size: 12px; font-weight: 950; opacity: .92; }
+.ohlcChange{ font-size: 12px; font-weight: 1100; margin-left: 6px; }
+
+/* timeframe */
+.tfRow{ display:flex; gap: 8px; flex-wrap: wrap; }
+.tfBtn{
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.10);
+  color: rgba(255,255,255,.92);
+  cursor:pointer;
+  font-weight: 950;
+  font-size: 12px;
+}
+.tfActive{
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.10);
+}
+
+/* right header controls */
+.hRight{
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.ctrlGroup{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* pills */
+.pill{
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.10);
+  color: rgba(255,255,255,.88);
+  cursor:pointer;
+  font-weight: 950;
+  font-size: 12px;
+}
+.pillOn{
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.94);
+}
+
+/* KPI row */
+.kpis{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.kpi{
+  background: rgba(17,24,39,.45);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  padding: 10px;
+  backdrop-filter: blur(10px);
+}
+.kLabel{ font-size: 11px; opacity: .62; }
+.kVal{ font-size: 13px; font-weight: 1150; margin-top: 6px; }
+
+/* Chart */
+.chartSection{
+  background: rgba(17,24,39,.72);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.24);
+  backdrop-filter: blur(10px);
+}
+.chartControls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+/* right side */
+.ctrlGroup{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* keeps label + select glued */
+.intervalGroup{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+
+
+/* ✅ CRITICAL: overlay positioning anchor */
+.chartWrap{
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.stateLoading{ padding: 12px; opacity: .8; }
+.stateError{
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(234,57,67,.45);
+  background: rgba(234,57,67,.10);
+}
+
+/* Colors */
+.up{ color: #16c784; }
+.down{ color: #ea3943; }
+.flat{ color: rgba(255,255,255,.86); }
+
+/* =========================
+   ✅ DRAWING OVERLAY (FINAL)
+   ========================= */
+
+/* wrapper overlay layer */
+.drawUi{
+  position:absolute;
+  inset: 0;
+  z-index: 50;            /* ✅ above chart canvas */
+  pointer-events: none;   /* ✅ doesn't block hover unless enabled */
+}
+
+/* toolbar clickable */
+.drawToolbar{
+  position:absolute;
+  top: 12px;
+  left: 12px;
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  z-index: 60;
+  pointer-events: auto;
+}
+
+/* hit area toggles */
+.drawHitOff,
+.drawHitOn{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.drawHitOff{ pointer-events: none; } /* ✅ hover OHLC works */
+.drawHitOn{ pointer-events: auto; }  /* ✅ drawing works */
+
+/* svg always covers */
+.drawSvg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+/* line + preview */
+.drawLine{
+  stroke: rgba(255,255,255,.78);
+  stroke-width: 2;
+}
+.drawLinePreview{
+  stroke: rgba(255,255,255,.55);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+
+/* markers */
+.longDot{ fill: rgba(22,199,132,.95); }
+.shortDot{ fill: rgba(234,57,67,.95); }
+.draftDot{ fill: rgba(255,255,255,.8); }
+
+/* Live strip (top) */
+.liveStrip{
+  display:flex;
+  gap: 10px;
+  overflow:auto;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(17,24,39,.45);
+  backdrop-filter: blur(10px);
+}
+.liveCard{
+  min-width: 140px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.10);
+}
+.liveSym{ font-weight: 1100; font-size: 12px; opacity: .95; }
+.livePx{ font-weight: 1200; font-size: 13px; margin-top: 6px; }
+.liveMeta{ font-size: 11px; opacity: .65; margin-top: 4px; }
+
+@media (max-width: 980px){
+  .shell{ grid-template-columns: 1fr !important; }
+  .nav{ min-height: auto; }
+  .navList{ height: auto; }
+  .kpis{ grid-template-columns: 1fr 1fr; }
+}

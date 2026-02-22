@@ -1,0 +1,148 @@
+/* AlertHeatmap.module.css */
+
+.wrap {
+  --labelW: 92px;     /* label column */
+  --gap: 10px;        /* spacing */
+  --cellH: 34px;
+
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Header */
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-weight: 900;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.sub {
+  font-size: 12px;
+  color: rgba(183, 189, 198, 0.9);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ✅ This is the key: grid fills the panel width */
+.grid {
+  display: grid;
+  grid-template-columns: var(--labelW) repeat(6, 1fr);
+  gap: var(--gap);
+  align-items: center;
+  width: 100%;
+}
+
+/* top-left spacer */
+.corner {
+  height: 28px;
+}
+
+/* Column headers */
+.colHeader {
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: rgba(183, 189, 198, 0.9);
+  white-space: nowrap;
+}
+
+/* ✅ Avoid display: contents bugs */
+.row {
+  display: grid;
+  grid-template-columns: var(--labelW) repeat(6, 1fr);
+  gap: var(--gap);
+  align-items: center;
+  grid-column: 1 / -1;
+}
+
+/* Row label */
+.rowHeader {
+  height: var(--cellH);
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  font-size: 12px;
+  color: rgba(183, 189, 198, 0.92);
+  white-space: nowrap;
+}
+
+/* Cells */
+.cell {
+  height: var(--cellH);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 12px;
+  user-select: none;
+
+  box-sizing: border-box;
+  background-clip: padding-box;
+
+  /* reduce subpixel seams */
+  transform: translateZ(0);
+}
+
+.cellZero {
+  opacity: 0.55;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  margin-top: 10px;
+  color: rgba(183, 189, 198, 0.95);
+  font-size: 12px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.legendNote {
+  margin-left: auto;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(183, 189, 198, 0.85);
+}
+
+/* ✅ Only scroll on small screens (so it never becomes a tiny card) */
+@media (max-width: 720px) {
+  .wrap {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .grid,
+  .row {
+    min-width: 560px; /* forces stable width for 6 columns */
+  }
+}

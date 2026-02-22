@@ -1,0 +1,9 @@
+.alert{
+  margin: 10px 0 0;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(239,68,68,.55);
+  background: rgba(239,68,68,.10);
+  color: #fecaca;
+  font-size: 13px;
+}

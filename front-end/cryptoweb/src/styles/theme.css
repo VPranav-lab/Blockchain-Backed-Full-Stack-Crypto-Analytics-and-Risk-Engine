@@ -1,0 +1,49 @@
+:root {
+  --bg-0: #070816;
+  --bg-1: #0b1024;
+
+  --text: rgba(233, 234, 242, 0.95);
+  --muted: rgba(233, 234, 242, 0.68);
+
+  --panel: rgba(15, 18, 38, 0.68);
+  --panel-2: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.12);
+
+  /* Your premium gradients */
+  --accent-a: rgba(139, 92, 246, 1);
+  --accent-b: rgba(56, 189, 248, 1);
+  --accent-c: rgba(236, 72, 153, 1);
+
+  /* Binance-ish accent */
+  --accent: #f0b90b;
+  --accent-2: #22c55e;
+  --danger: #ef4444;
+
+  --shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
+  --radius-xl: 22px;
+  --radius-lg: 16px;
+  --r: 16px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: var(--text);
+
+  /* ✅ Keep the premium background */
+  background:
+    radial-gradient(1100px 650px at 15% 12%, rgba(139, 92, 246, 0.30), transparent 60%),
+    radial-gradient(950px 620px at 85% 18%, rgba(56, 189, 248, 0.22), transparent 58%),
+    radial-gradient(900px 700px at 50% 95%, rgba(236, 72, 153, 0.14), transparent 60%),
+    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+}
+
+a {
+  color: rgba(56, 189, 248, 0.98);
+  text-decoration: none;
+  font-weight: 800;
+}
+a:hover { text-decoration: underline; }

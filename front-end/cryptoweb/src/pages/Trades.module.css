@@ -1,0 +1,683 @@
+/* CONTAINER */
+.page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+  color: var(--text, #e9eaf2);
+  min-height: calc(100vh - 80px);
+}
+
+/* --- HEADER SECTION --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* ✅ change from flex-end */
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+
+/* Ticker & Select */
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ✅ FIX: Dropdown Styling & Dark Mode Enforcement */
+.symSelect {
+  appearance: none;
+  background: var(--panel, rgba(15, 18, 38, 0.6));
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  padding: 8px 40px 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  
+  /* ✅ CRITICAL: Forces browser dropdown list to be dark */
+  color-scheme: dark; 
+}
+
+.symSelect:hover {
+  border-color: var(--accent-b, #38bdf8);
+  background: rgba(255,255,255,0.05);
+}
+
+.symSelect option {
+  background-color: #0b1024; /* Fallback for some browsers */
+  color: white;
+}
+
+.arrow {
+  position: absolute;
+  right: 16px;
+  pointer-events: none;
+  color: var(--muted, #888);
+  font-size: 12px;
+}
+
+.priceBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.livePrice {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-2, #22c55e); /* Green */
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: -0.5px;
+}
+
+.liveTag {
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-top: -4px;
+}
+
+/* Balance */
+.balance {
+  text-align: right;
+}
+
+.balLabel {
+  font-size: 12px;
+  color: var(--muted, #888);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.balValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* --- GRID LAYOUT --- */
+.grid {
+  display: grid;
+  grid-template-columns: 380px 1fr; /* Fixed width form, fluid data */
+  gap: 24px;
+  align-items: start;
+}
+
+/* --- FORM CARD --- */
+.formCard {
+  background: var(--panel, rgba(15, 18, 38, 0.6));
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* Buy/Sell Tabs */
+.sideTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(0,0,0,0.3);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.btnSide {
+  background: transparent;
+  border: none;
+  color: var(--muted, #888);
+  font-weight: 700;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.btnBuyActive {
+  background: var(--accent-2, #22c55e);
+  color: #000;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(34, 197, 94, 0.3);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btnSellActive {
+  background: var(--danger, #ef4444);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ✅ FIX: Segmented Control for Order Types */
+.typeTabs {
+  display: flex;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.typeBtn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted, #888);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.typeActive {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.disabledTab {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Inputs */
+.inputStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  color: var(--muted, #888);
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrap input {
+  width: 100%;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 10px;
+  padding: 12px 60px 12px 12px; /* Right padding for suffix */
+  color: #fff;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.inputWrap input:focus {
+  border-color: var(--accent-b, #38bdf8);
+}
+
+.suffix {
+  position: absolute;
+  right: 12px;
+  color: var(--muted, #888);
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.receiptBtn {
+  background: transparent;
+  border: 1px solid #2b3139;
+  color: #0ecb81;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+.receiptBtn:hover { opacity: 0.9; }
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.modalCard {
+  width: 680px;
+  max-width: 100%;
+  background: #1e2329;
+  border: 1px solid #2b3139;
+  border-radius: 10px;
+  padding: 16px;
+  color: white;
+}
+
+/* ===== Receipt Modal (Clean UI) ===== */
+.receiptModal {
+  width: min(900px, 92vw);
+  max-height: 85vh;
+  overflow: auto;
+  background: rgba(18, 20, 24, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+}
+
+.receiptHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 12px;
+}
+
+.receiptTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #eaecef;
+}
+
+/* Right side container: balance + refresh */
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* Refresh button */
+.refreshBtn{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(234,236,239,0.9);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 12px;
+}
+.refreshBtn:hover{ background: rgba(255,255,255,0.10); }
+.refreshBtn:disabled{ opacity: 0.5; cursor: not-allowed; }
+
+/* Status pill used in table */
+.statusPill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+
+
+.receiptSub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(234,236,239,0.65);
+}
+
+.receiptHeaderActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.miniGhostBtn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(234,236,239,0.9);
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.receiptLoading {
+  padding: 12px;
+  color: rgba(234,236,239,0.75);
+}
+
+.receiptWarn {
+  background: rgba(240, 185, 11, 0.12);
+  border: 1px solid rgba(240, 185, 11, 0.25);
+  color: rgba(240, 185, 11, 0.95);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+.receiptEmpty {
+  padding: 14px;
+  color: rgba(234,236,239,0.65);
+}
+
+.receiptSummaryCard {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.receiptGrid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  margin-top: 10px;
+}
+
+.receiptRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.receiptLabel {
+  color: rgba(234,236,239,0.6);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.receiptValue {
+  color: rgba(234,236,239,0.95);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.hashWrap {
+  max-width: 560px;
+  overflow-wrap: anywhere;
+}
+
+.receiptDetails {
+  margin-top: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.receiptSummaryLine {
+  cursor: pointer;
+  color: rgba(234,236,239,0.9);
+  font-weight: 800;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.detailsBody {
+  margin-top: 10px;
+}
+
+.proofOk {
+  color: #0ecb81;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.proofWarn {
+  color: #f0b90b;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+/* status pills */
+.pillOk {
+  background: rgba(14,203,129,0.14);
+  border: 1px solid rgba(14,203,129,0.30);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.pillWarn {
+  background: rgba(240,185,11,0.14);
+  border: 1px solid rgba(240,185,11,0.30);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.pillNeutral {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.proofSteps {
+  margin-top: 10px;
+}
+
+.proofPre {
+  margin: 0;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(234,236,239,0.9);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow: auto;
+}
+
+
+.closeBtn {
+  background: transparent;
+  border: 1px solid #2b3139;
+  color: #b7bdc6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+.estBox {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.estBox span { font-size: 12px; color: var(--muted, #888); }
+.estVal { color: #fff !important; font-weight: 700; font-family: 'Roboto Mono', monospace; }
+
+/* Alerts */
+.alertError, .alertSuccess {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 600;
+}
+.alertError { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+.alertSuccess { background: rgba(34, 197, 94, 0.15); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.2); }
+
+/* Submit Button */
+.submitBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  margin-top: 8px;
+  transition: transform 0.1s;
+}
+.submitBtn:active { transform: translateY(1px); }
+.submitBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.submitBuy {
+  background: linear-gradient(135deg, var(--accent-2, #22c55e) 0%, #16a34a 100%);
+  color: #000;
+}
+.submitSell {
+  background: linear-gradient(135deg, var(--danger, #ef4444) 0%, #b91c1c 100%);
+  color: #fff;
+}
+
+/* --- DATA TABLE --- */
+.dataCard {
+  background: var(--panel, rgba(15, 18, 38, 0.6));
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  height: fit-content;
+  min-height: 500px; /* Keep height consistent */
+}
+
+.dataHeader {
+  display: flex;
+  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+  background: rgba(0,0,0,0.2);
+}
+
+.tab, .tabActive {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding-bottom: 2px;
+  color: var(--muted, #888);
+  position: relative;
+}
+
+.tabActive {
+  color: #fff;
+}
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  bottom: -18px; /* Align with border-bottom */
+  left: 0; 
+  width: 100%;
+  height: 2px;
+  background: var(--accent-b, #38bdf8);
+}
+
+.tableBox {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 16px;
+  color: var(--muted, #888);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: #eee;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted, #888);
+  font-style: italic;
+}
+
+/* Helpers */
+.mono { font-family: 'Roboto Mono', monospace; }
+.textBuy { color: var(--accent-2, #22c55e); font-weight: 700; }
+.textSell { color: var(--danger, #ef4444); font-weight: 700; }
+.badge {
+  background: rgba(255,255,255,0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+.cancelLink {
+  background: none;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  color: var(--muted, #888);
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.cancelLink:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+  .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .balance { text-align: left; }
+}
