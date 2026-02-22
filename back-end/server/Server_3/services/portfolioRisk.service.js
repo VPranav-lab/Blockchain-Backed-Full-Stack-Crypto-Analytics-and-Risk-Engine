@@ -6,7 +6,7 @@ const { generateScenarioFromNews } =
 const { applyScenarioImpact } =
   require("./scenarioImpact.service");
 //const { calculateConcentrationRisk } = require("../utils/riskEngine");
-
+const fetchKlines = require("../services/binance.service");
 const {
   calculateDailyReturns,
   calculateVolatility,

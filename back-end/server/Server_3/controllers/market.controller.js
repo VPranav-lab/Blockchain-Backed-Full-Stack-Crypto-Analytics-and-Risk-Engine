@@ -170,24 +170,35 @@ exports.getSummary = async (req, res) => {
 
 exports.getAllSummaries = async (req, res) => {
   try {
+    // 1️⃣ Get enabled symbols from DB
+    const enabledSymbols = await MarketSymbol.find(
+      {},
+      { symbol: 1, _id: 0 }
+    );
+
+    const symbolSet = new Set(enabledSymbols.map(s => s.symbol));
+
+    // 2️⃣ Fetch all tickers
     const response = await axios.get(
       "https://api.binance.com/api/v3/ticker/24hr",
       { timeout: 8000 }
     );
 
+    // 3️⃣ Filter only DB symbols
     const summaries = response.data
-    .filter(item => item.symbol.endsWith("USDT"))
-    .map(item => ({
-      symbol: item.symbol,
-      open: Number(item.openPrice),
-      high: Number(item.highPrice),
-      low: Number(item.lowPrice),
-      close: Number(item.lastPrice),
-      changePercent: Number(item.priceChangePercent),
-      volume: Number(item.volume)
-    }));
+      .filter(item => symbolSet.has(item.symbol))
+      .map(item => ({
+        symbol: item.symbol,
+        open: Number(item.openPrice),
+        high: Number(item.highPrice),
+        low: Number(item.lowPrice),
+        close: Number(item.lastPrice),
+        changePercent: Number(item.priceChangePercent),
+        volume: Number(item.volume)
+      }));
 
     res.json(summaries);
+
   } catch (err) {
     console.error(err.response?.data || err.message);
 

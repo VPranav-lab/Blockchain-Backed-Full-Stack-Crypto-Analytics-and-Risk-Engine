@@ -43,7 +43,7 @@ export default function Portfolio() {
 
   useEffect(() => {
     fetchHoldings();
-    const interval = setInterval(fetchHoldings, 5000);
+    const interval = setInterval(fetchHoldings, 500);
     return () => clearInterval(interval);
   }, [fetchHoldings]);
 
@@ -93,7 +93,7 @@ export default function Portfolio() {
 
           <div className={styles.statsRow}>
             <div className={styles.statItem}>
-              <span className={styles.statLabel}>24h Profit / Loss</span>
+              <span className={styles.statLabel}>Profit / Loss</span>
               <span className={`${styles.statVal} ${totalPnL >= 0 ? styles.green : styles.red}`}>
                 {totalPnL >= 0 ? "+" : ""}
                 {money2(totalPnL)}

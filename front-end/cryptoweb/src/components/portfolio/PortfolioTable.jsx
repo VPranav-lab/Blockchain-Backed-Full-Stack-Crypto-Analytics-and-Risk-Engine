@@ -13,7 +13,7 @@ export default function PortfolioTable({ rows, onTrade }) {
             <th align="right">Avg Buy Price</th>
             <th align="right">Market Price</th>
             <th align="right">Value (USDT)</th>
-            <th align="right">PnL (24h)</th>
+            <th align="right">PnL</th>
             <th align="right">Action</th>
           </tr>
         </thead>
