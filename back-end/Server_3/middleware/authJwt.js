@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { env } = require("../../src/config/env");
+const { env } = require("../../server/src/config/env");
 
 function authJwt(req, _res, next) {
   try {
