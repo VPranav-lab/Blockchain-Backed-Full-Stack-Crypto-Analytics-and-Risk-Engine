@@ -1,13 +1,13 @@
 require("dotenv").config();
-
+//console.log("ENV CHECK:", process.env.MYSQL_HOST);
 const app = require("./app");
 const connectDB = require("./config/mongodb");
 
-const PORT = process.env.PORT2 || 4000;
+const PORT = process.env.PORT || 4000;
 
 // Use env variable instead of hardcoding
-connectDB(process.env.MONGO_URI2);
+connectDB(process.env.MONGO_URI);
 
-app.listen(PORT,"0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

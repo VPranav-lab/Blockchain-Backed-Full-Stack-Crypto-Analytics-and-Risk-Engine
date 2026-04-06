@@ -19,7 +19,7 @@ async function startBinanceLive() {
 
   if (!symbols.length) return;
 
-  const batches = chunkArray(symbols, 50);
+  const batches = chunkArray(symbols, 20);
 
   batches.forEach((batch, index) => {
     const streams = batch

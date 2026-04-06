@@ -1,7 +1,7 @@
 const path = require("path");
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-}
+
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
 
 function must(name) {
   const v = process.env[name];
