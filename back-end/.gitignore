@@ -5,6 +5,10 @@
 # logs
 *.log
 
+# Large local archives
+back-end/server.zip
+back-end/Server_3.zip
+
 # dependencies
 node_modules/
 **/node_modules/
