@@ -1,1 +1,226 @@
+
+
+# CryptoWeb
+# Git Ignore Configuration
+
+
+
+# 1. ENVIRONMENT VARIABLES AND SECRETS
+
+
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Keep example configuration files
+!.env.example
+!**/.env.example
+!.env.sample
+!**/.env.sample
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local secrets
+secrets/
+**/secrets/
+
+
+# 2. LARGE ARCHIVES AND BACKUPS
+
+
+# Ignore ZIP archives
+*.zip
+**/*.zip
+
+# Other compressed archives
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+
+# Specific backend archives
+back-end/server.zip
 back-end/Server_3.zip
+
+# Backup and temporary files
+*.bak
+*.backup
+*.tmp
+*.temp
+*.swp
+*~
+
+
+
+# 3. NODE.JS / EXPRESS DEPENDENCIES
+
+
+node_modules/
+**/node_modules/
+
+.npm/
+.pnpm-store/
+.yarn/cache/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+
+# 4. REACT / VITE BUILD FILES
+
+
+dist/
+**/dist/
+
+build/
+**/build/
+
+.vite/
+**/.vite/
+
+.cache/
+**/.cache/
+
+.next/
+.out/
+
+
+
+# 5. PYTHON / FASTAPI / ML SERVICE
+
+
+# Python virtual environments
+.venv/
+**/.venv/
+
+venv/
+**/venv/
+
+env/
+**/env/
+
+# Python compiled files
+__pycache__/
+**/__pycache__/
+
+*.pyc
+*.pyo
+*.pyd
+
+# Python testing and analysis caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Python packaging
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Local Jupyter checkpoints
+.ipynb_checkpoints/
+
+
+
+# 6. LOGS AND DEBUG OUTPUT
+
+
+logs/
+**/logs/
+
+*.log
+*.log.*
+
+debug.log
+error.log
+
+
+
+# 7. TEST COVERAGE
+
+
+coverage/
+**/coverage/
+
+.nyc_output/
+htmlcov/
+
+.coverage
+.coverage.*
+
+
+
+# 8. LOCAL DATABASE FILES AND DUMPS
+
+
+*.sqlite
+*.sqlite3
+*.db
+
+*.sql.gz
+*.dump
+
+# Keep SQL migration scripts in GitHub
+# Do not ignore normal *.sql files
+
+
+
+# 9. USER UPLOADS AND PRIVATE DOCUMENTS
+
+
+uploads/
+**/uploads/
+
+private_uploads/
+**/private_uploads/
+
+# Uploaded KYC documents should not be committed
+kyc_uploads/
+**/kyc_uploads/
+
+
+# 10. OPERATING SYSTEM FILES
+
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+$RECYCLE.BIN/
+.Trashes/
+
+
+
+# 11. VS CODE AND OTHER EDITORS
+
+.vscode/
+**/.vscode/
+
+.idea/
+**/.idea/
+
+.history/
+
+
+
+# 12. TEMPORARY WORKING DIRECTORIES
+
+
+tmp/
+temp/
+
+**/tmp/
+**/temp/
+
+
+
