@@ -1,16 +1,6 @@
 # CryptoWeb: Software Requirements Specification
 **Secure Cryptocurrency Analytics, Paper Trading and Decision-Support Platform**
 
-| Document field | Value |
-|---|---|
-| Document identifier | SRS-CW-001 |
-| Version | 0.5 |
-| Date | 15 November 2026 |
-| Course | Software Engineering, NTUA School of Electrical and Computer Engineering, 2026–2027 |
-| Author | Pranav |
-| Project identifier | softeng26-XX (replace XX with the assigned identifier) |
-| Status | Draft for review |
-
 ## Contents
 1. [Introduction](#1-introduction)
 2. [Software requirements](#2-software-requirements)
