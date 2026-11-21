@@ -1,0 +1,49 @@
+@startuml E3-component-03-wallet-trades-layered
+title CryptoWeb - Wallet and Market Trading Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "Server_3 :4000" {
+  component "trade.controller.js" as S3Trade
+  component "wallet.controller.js withdrawalBank.controller.js" as S3Wallet
+  component "personA.gateway.js" as Gateway
+  component "trade Mongoose model" as TradeProjection
+}
+package "Core :5000" {
+  component "trade.controller.js" as CoreTradeCtrl
+  component "trade.service.js" as CoreTradeSvc
+  component "wallet.controller.js" as CoreWalletCtrl
+  component "wallet.service.js" as CoreWalletSvc
+  component "binancePrice.service.js" as PriceSvc
+}
+database "MySQL wallet / holding / trade fill" as SQL
+database "MongoDB trades" as Mongo
+
+S3Trade --> Gateway : execute trade
+S3Wallet --> Gateway : wallet proxy
+Gateway --> CoreTradeCtrl : REST
+Gateway --> CoreWalletCtrl : REST
+CoreTradeCtrl --> PriceSvc
+CoreTradeCtrl --> CoreTradeSvc
+CoreWalletCtrl --> CoreWalletSvc
+CoreTradeSvc --> SQL : atomic settlement
+CoreWalletSvc --> SQL : wallet operations
+S3Trade --> TradeProjection : sync fill
+TradeProjection --> Mongo
+
+note bottom of CoreTradeSvc
+Core commits the trade and wallet updates.
+Server_3 subsequently writes a Mongo trade projection.
+end note
+
+@enduml

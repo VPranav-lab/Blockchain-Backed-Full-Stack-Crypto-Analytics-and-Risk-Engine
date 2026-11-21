@@ -1,0 +1,50 @@
+@startuml E3-component-05-market-backtest-layered
+title CryptoWeb - Market, News and Backtesting Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "Server_3 HTTP handlers" {
+  component "market.controller.js" as MarketCtrl
+  component "backtest.controller.js" as BacktestCtrl
+  component "news.routes.js" as NewsRoutes
+  component "watchlist.controller.js" as WatchCtrl
+}
+package "Server_3 services / jobs" {
+  component "binance.service.js livePrice.service.js" as MarketServices
+  component "candleScheduler.js" as CandlesJob
+  component "newsCrawler.service.js" as NewsCrawler
+  component "backtestSimulator.js" as Simulator
+}
+package "Mongoose models" {
+  component "Candle / MarketSymbol" as MarketModels
+  component "News / Backtest / Watchlist" as Models
+}
+database "MongoDB" as Mongo
+cloud "Binance market API" as Binance
+cloud "RSS news sources" as RSS
+
+MarketCtrl --> MarketServices
+MarketCtrl --> MarketModels
+MarketServices --> Binance
+CandlesJob --> MarketModels
+NewsCrawler --> RSS
+NewsCrawler --> Models
+NewsRoutes --> Models
+BacktestCtrl --> Simulator
+BacktestCtrl --> MarketModels
+BacktestCtrl --> Models
+WatchCtrl --> Models
+MarketModels --> Mongo
+Models --> Mongo
+
+@enduml

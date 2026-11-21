@@ -1,0 +1,46 @@
+@startuml E3_API_06_LAYERED
+title API 06: Prediction and Internal ML APIs (LAYERED view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+actor "React client / admin" as Client
+
+component "Core :5000 - Core prediction API\nPOST /api/ml/price-prediction\nGET /api/ml/predictions" as API1 <<REST API>>
+component "Core :5000 - Core ML administration\nPOST /api/ml/admin/weekly-train/run" as API2 <<REST API>>
+component "Server_3 :4000 - Server_3 ML data API\nGET /v1/ml/candles\nGET /v1/ml/latest_features\nGET /v1/ml/influence_graph" as API3 <<REST API>>
+component "ML FastAPI :8000 - Python FastAPI service\nGET /security/anomaly-model\nPOST /security/anomaly-score\nGET /health\nPOST /predict\nPOST /admin/reload" as API4 <<REST API>>
+
+package "Routing and controller layer" {
+  component "ml.controller.js (Core)\nmain.py (FastAPI endpoint handlers)\nmlData.controller.js (Server_3)" as Controllers <<Controllers / route handlers>>
+}
+package "Service and orchestration layer" {
+  component "ml.service.js (Core)\nmodel.py / security_anomaly.py (ML)" as Services <<Services / jobs>>
+}
+database "MongoDB: ml_predictions, signals_ml,\nmarket data; ML model artifacts" as Storage
+Client --> API1 : HTTP / JSON
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+API3 --> Controllers : dispatch
+API4 --> Controllers : dispatch
+Controllers --> Services : calls (as implemented)
+Services --> Storage : reads/writes
+Services ..> API4 : POST /predict (service key)
+API4 ..> API3 : market data via DataClient (service key)
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

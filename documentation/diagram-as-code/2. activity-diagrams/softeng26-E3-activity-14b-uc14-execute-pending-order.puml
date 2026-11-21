@@ -1,0 +1,62 @@
+@startuml CryptoWeb-14b-uc14-execute-pending-order
+title CryptoWeb - UC14B - Execute Triggered Conditional Order
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Scheduled Order Executor|
+start
+:Every 5-10 seconds scan PENDING orders;
+:Read latest market price for order symbol;
+if (Price available?) then (no)
+  :Leave order PENDING;
+  stop
+endif
+if (LIMIT BUY price <= limit OR
+LIMIT SELL price >= limit OR
+STOP LOSS price <= stop?) then (no)
+  :Leave order PENDING for next scan;
+  stop
+endif
+:Atomically claim order as PROCESSING;
+if (Claim succeeded?) then (no)
+  :Skip order already claimed/cancelled;
+  stop
+endif
+|Core Settlement Service|
+:Fetch authoritative current spot price;
+:Validate slippage and active wallet;
+:Check idempotency and funds/holdings;
+:Attempt MySQL market-price settlement;
+if (Settlement succeeds?) then (yes)
+  |Scheduled Order Executor|
+  :Upsert MongoDB trade using referenceId;
+  if (History synchronization succeeded?) then (yes)
+    :Set order EXECUTED with fillId;
+    if (OCO sibling orders exist?) then (yes)
+      :Cancel still-PENDING OCO siblings;
+    endif
+  else (no)
+    :Return order to PENDING for retry;
+    note right
+      MySQL settlement is already committed.
+      Repeated settlement reference is
+      handled idempotently on retry.
+    end note
+  endif
+else (no)
+  |Scheduled Order Executor|
+  if (Permanent business failure?) then (yes)
+    :Set order FAILED;
+  else (no)
+    :Return order to PENDING for later retry;
+  endif
+endif
+stop
+@enduml

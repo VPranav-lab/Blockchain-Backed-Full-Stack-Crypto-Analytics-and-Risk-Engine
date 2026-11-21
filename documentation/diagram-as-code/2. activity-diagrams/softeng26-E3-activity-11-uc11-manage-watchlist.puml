@@ -1,0 +1,50 @@
+@startuml CryptoWeb-11-uc11-manage-watchlist
+title CryptoWeb - UC11 - Manage Personal Watchlist
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Verified User|
+start
+:Open personal watchlist;
+|Web Access Gate|
+:Verify logged-in status and approved KYC;
+if (Allowed?) then (no)
+  |Verified User|
+  :View login/KYC requirement;
+  stop
+endif
+|Watchlist Service|
+:Load entries belonging to authenticated user;
+|Verified User|
+:View saved symbols;
+if (Edit watchlist?) then (no)
+  stop
+endif
+if (Add symbol?) then (yes)
+  :Choose cryptocurrency symbol;
+  |Watchlist Service|
+  if (Symbol supplied and not already saved?) then (yes)
+    :Create user-specific watchlist entry;
+  else (no)
+    :Return invalid/duplicate response;
+  endif
+else (no)
+  :Select symbol to remove;
+  |Watchlist Service|
+  if (Entry belongs to user?) then (yes)
+    :Delete selected entry;
+  else (no)
+    :Return not-found response;
+  endif
+endif
+|Verified User|
+:View refreshed personal watchlist;
+stop
+@enduml

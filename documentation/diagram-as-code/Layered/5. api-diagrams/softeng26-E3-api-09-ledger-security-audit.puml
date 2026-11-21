@@ -1,0 +1,38 @@
+@startuml E3_API_09_LAYERED
+title API 09: Security Audit Ledger APIs (LAYERED view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+actor "React client / admin" as Client
+
+component "Core :5000 - Security audit admin endpoints\nPOST /api/ledger/admin/audit/commit\nGET /api/ledger/admin/audit/verify\nGET /api/ledger/admin/audit/blocks\nGET /api/ledger/admin/audit/blocks/:height\nGET /api/ledger/admin/audit/locks\nPOST /api/ledger/admin/audit/unlock\nPOST /api/ledger/admin/audit/finalize/:height\nGET /api/ledger/admin/audit/actions" as API1 <<REST API>>
+
+package "Routing and controller layer" {
+  component "ledger.controller.js" as Controllers <<Controllers / route handlers>>
+}
+package "Service and orchestration layer" {
+  component "ledger.service.js" as Services <<Services / jobs>>
+}
+database "MongoDB: security audit blocks,\nitems, locks and actions" as Storage
+Client --> API1 : HTTP / JSON
+API1 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads / writes
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

@@ -1,0 +1,45 @@
+@startuml E3_API_08_MVC
+title API 08: Settlement Ledger and Receipt APIs (MVC view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+package "Presentation (React)" {
+  component "admin/tabs/LedgerAudit.jsx\nTrades.jsx\nWallet.jsx" as UI <<View>>
+  component "ledgerApi.js" as Adapter <<Frontend API modules>>
+}
+
+component "Core :5000 - Settlement/admin + receipts\nPOST /api/ledger/admin/commit\nGET /api/ledger/admin/verify\nGET /api/ledger/admin/blocks\nGET /api/ledger/admin/blocks/:height\nGET /api/ledger/admin/locks\nPOST /api/ledger/admin/unlock\nPOST /api/ledger/admin/finalize/:height\nGET /api/ledger/admin/actions\nGET /api/ledger/receipt/wallet/:txId\nGET /api/ledger/receipt/security/:logId\nGET /api/ledger/receipt/trade/:tradeId" as API1 <<REST API>>
+
+package "HTTP controllers and application logic" {
+  component "ledger.controller.js" as Controllers <<Express/FastAPI controllers>>
+  component "ledger.service.js" as Services <<Existing service modules>>
+}
+database "MongoDB: ledger_blocks, ledger_items,\nadmin actions\nMySQL: trade_fills, wallet_transactions" as Storage
+UI --> Adapter : invokes
+
+Adapter --> API1 : REST
+API1 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads/writes
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+note bottom of Controllers
+  Admin ledger access is checked in controllers.
+  Receipt requests check owner/admin.
+end note
+@enduml

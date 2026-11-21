@@ -1,0 +1,104 @@
+@startuml CryptoWeb-E3-layered-wallettrading
+title CryptoWeb - Wallet and Market Trade Settlement (LAYERED view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "Server_3 API coordination" {
+  class "Trade Controller" as STC <<controller module>> {
+    +posttrade()
+    +gettrades()
+  }
+  class "Core Gateway" as GT <<HTTP gateway module>> {
+    +executeUserTrade()
+    +getFillByReferenceInternal()
+  }
+  class "Trade projection" as MT <<Mongoose model>> {
+    +userId
+    +referenceId
+    +fillId
+    +walletTxId
+    +price
+    +orderId
+  }
+}
+
+package "Core trade and wallet services" {
+  class "Trade Controller" as CTC <<controller module>> {
+    +execute()
+    +buy()
+    +sell()
+  }
+  class "Trade Service" as CTS <<service module>> {
+    +buy()
+    +sell()
+    +getFillByReference()
+  }
+  class "Binance Price Service" as PS <<service module>> {
+    +getSpotPrice()
+  }
+  class "Wallet Controller" as WC <<controller module>> {
+    +balance()
+    +deposit()
+    +withdraw()
+  }
+  class "Wallet Service" as WS <<service module>> {
+    +getWallet()
+    +depositAtomic()
+    +withdrawAtomic()
+  }
+}
+
+package "MySQL records" {
+  class "wallets" as W <<SQL table>> {
+    +id
+    +user_id
+    +balance
+    +status
+  }
+  class "wallet_transactions" as TX <<SQL table>> {
+    +id
+    +user_id
+    +status
+    +amount
+  }
+  class "portfolio_holdings" as H <<SQL table>> {
+    +id
+    +user_id
+    +symbol
+    +quantity
+  }
+  class "trade_fills" as F <<SQL table>> {
+    +id
+    +user_id
+    +wallet_tx_id
+    +status
+  }
+}
+
+STC ..> GT : REST client
+STC ..> MT : upsert projection
+GT ..> CTC : Core REST
+CTC ..> PS : market price
+CTC ..> CTS : executes
+CTS ..> W : atomic SQL
+CTS ..> TX : inserts
+CTS ..> H : updates
+CTS ..> F : inserts
+WC ..> WS
+WS ..> W
+WS ..> TX
+
+legend bottom
+Core settlement is authoritative. Server_3 stores a secondary MongoDB Trade projection.
+endlegend
+
+@enduml

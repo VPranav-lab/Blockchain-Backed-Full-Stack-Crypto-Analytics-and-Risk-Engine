@@ -1,0 +1,41 @@
+@startuml E3-deployment-05-identity-ledger-mvc
+title CryptoWeb - Deployment 05: Identity, Security and Ledger (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+node "Client browser" as Browser {
+  artifact "Login / KYC / Admin Views" as UI
+  artifact "auth / KYC API clients" as Api
+}
+node "Core Node.js :5000" as Core {
+  artifact "Express Auth / KYC Controllers" as Routes
+  artifact "SQL data-access / ledger services" as Services
+  artifact "scheduled ledger jobs" as Jobs
+}
+database "Core MySQL\nusers / refresh_tokens / KYC / security_logs" as SQL
+database "Core MongoDB\nledger_* / audit_* / alerts" as Mongo
+
+Browser --> Core : auth / KYC / admin / receipts / audit API
+Core --> SQL : identity + settlement metadata
+Core --> Mongo : immutable-style hash-linked ledger/audit records
+
+note bottom of Core
+  Scheduled ledger jobs are part of
+  the Core Node.js runtime; they are
+  not independent deployment nodes.
+end note
+note bottom of SQL
+  KYC documents and supporting data
+  are stored under Core persistence.
+end note
+
+@enduml

@@ -1,0 +1,76 @@
+@startuml CryptoWeb-E3-mvc-conditionalorders
+title CryptoWeb - Conditional Orders and Scheduled Execution (MVC view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "React view and API adapter" {
+  class "Trades" as TV <<React view>> {
+    +Trades()
+  }
+  class "tradeApi" as TA <<API object>> {
+    +cancelOrder()
+    +getOpenOrders()
+  }
+}
+
+package "Controllers / asynchronous execution" {
+  class "Order Controller" as OC <<controller module>> {
+    +postorder()
+    +getorders()
+    +updateorder()
+    +deleteorder()
+  }
+  class "Order Executor" as OE <<scheduled job module>> {
+    +shouldExecute()
+    +markExecuted()
+    +markFailed()
+  }
+  class "Live Price Service" as LP <<service module>> {
+    +getPrice()
+  }
+  class "Core Gateway" as GW <<gateway module>> {
+    +executeInternalTrade()
+  }
+}
+
+package "Mongoose models" {
+  class "Order" as O <<Mongoose model>> {
+    +userId
+    +symbol
+    +side
+    +orderType
+    +qty
+    +price
+    +status
+  }
+  class "Trade" as T <<Mongoose model>> {
+    +orderId : ObjectId [optional]
+    +price : String
+    +fillId : Number
+  }
+}
+
+TV ..> TA : submits
+TA ..> OC : REST
+OC ..> O : create/cancel
+OE ..> O : polls/claims
+OE ..> LP : reads live price
+OE ..> GW : Core settlement
+OE ..> T : saves executed trade
+T "0..*" --> "0..1" O : orderId
+
+legend bottom
+Conditional order requests use tradeApi in the implemented Trades React page.
+An executed order can produce a trade; market trades have no Order document.
+endlegend
+
+@enduml

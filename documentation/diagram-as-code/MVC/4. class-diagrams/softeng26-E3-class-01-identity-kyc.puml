@@ -1,0 +1,96 @@
+@startuml CryptoWeb-E3-mvc-identitykyc
+title CryptoWeb - Authentication and KYC (MVC view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "React views" {
+  class "Login" as LV <<React view>> {
+    +Login()
+  }
+  class "Register" as RV <<React view>> {
+    +Register()
+  }
+  class "Kyc" as KV <<React view>> {
+    +Kyc()
+  }
+  class "KycManagement" as AV <<React admin view>> {
+    +KycManagement()
+  }
+}
+
+package "Client adapters" {
+  class "authApi" as AA <<API object>> {
+    +login()
+    +register()
+    +getMe()
+    +logout()
+  }
+  class "kycApi" as KA <<API object>> {
+    +submit()
+    +getStatus()
+    +review()
+    +listApplications()
+  }
+}
+
+package "Express controllers and services" {
+  class "Auth Controller" as AC <<controller module>> {
+    +register()
+    +login()
+    +refresh()
+    +logout()
+  }
+  class "KYC Controller" as KC <<controller module>> {
+    +submit()
+    +status()
+    +review()
+  }
+  class "Auth Service" as AS <<service module>> {
+    +register()
+    +login()
+    +refreshSession()
+  }
+  class "KYC Service" as KS <<service module>> {
+    +submitKyc()
+    +reviewKyc()
+  }
+}
+
+package "MySQL entities" {
+  class "User record" as U <<SQL entity>> {
+    +id
+    +email
+    +role
+  }
+  class "KYC application record" as K <<SQL entity>> {
+    +id
+    +user_id
+    +status
+  }
+}
+
+LV ..> AA
+RV ..> AA
+KV ..> KA
+AV ..> KA
+AA ..> AC : REST
+KA ..> KC : REST
+AC ..> AS
+KC ..> KS
+AS ..> U : SQL
+KS ..> K : SQL
+
+legend bottom
+React components are functional views; Express controllers and services remain modules.
+endlegend
+
+@enduml

@@ -1,0 +1,47 @@
+@startuml E3_API_01_MVC
+title API 01: Authentication and KYC APIs (MVC view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+package "Presentation (React)" {
+  component "Login.jsx\nRegister.jsx\nKyc.jsx\nadmin/tabs/KycManagement.jsx" as UI <<View>>
+  component "authApi.js\nkycApi.js" as Adapter <<Frontend API modules>>
+}
+
+component "Core :5000 - Authentication\nPOST /api/auth/register\nPOST /api/auth/login\nGET /api/auth/me\nPOST /api/auth/refresh\nPOST /api/auth/logout" as API1 <<REST API>>
+component "Core :5000 - KYC user\nPOST /api/kyc/submit\nGET /api/kyc/status\nPOST /api/kyc/documents" as API2 <<REST API>>
+component "Core :5000 - KYC administration\nGET /api/kyc/admin/applications\nPOST /api/kyc/admin/review\nPOST /api/kyc/admin/reveal-doc-number\nGET /api/kyc/admin/documents\nGET /api/kyc/admin/documents/:id/file" as API3 <<REST API>>
+
+package "HTTP controllers and application logic" {
+  component "auth.controller.js\nkyc.controller.js" as Controllers <<Express/FastAPI controllers>>
+  component "auth.service.js\nkyc.service.js" as Services <<Existing service modules>>
+}
+database "MySQL: users, refresh_tokens,\nkyc_applications, kyc_documents" as Storage
+UI --> Adapter : invokes
+
+Adapter --> API1 : REST
+Adapter --> API2 : REST
+Adapter --> API3 : REST
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+API3 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads / writes
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

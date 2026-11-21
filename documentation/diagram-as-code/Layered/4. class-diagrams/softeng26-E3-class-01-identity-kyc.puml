@@ -1,0 +1,100 @@
+@startuml CryptoWeb-E3-layered-identitykyc
+title CryptoWeb - Authentication and KYC (LAYERED view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "HTTP routing" {
+  class "Auth Routes" as AR <<router>> {
+    +register()
+    +login()
+  }
+  class "Auth Controller" as AC <<controller module>> {
+    +register()
+    +login()
+    +refresh()
+    +logout()
+    +me()
+  }
+  class "KYC Routes" as KR <<router>> {
+    +submit()
+    +review()
+    +status()
+  }
+  class "KYC Controller" as KC <<controller module>> {
+    +submit()
+    +status()
+    +review()
+    +uploadDocument()
+  }
+}
+
+package "Application services" {
+  class "Auth Service" as AS <<service module>> {
+    +register()
+    +login()
+    +refreshSession()
+    +logoutSession()
+  }
+  class "KYC Service" as KS <<service module>> {
+    +submitKyc()
+    +reviewKyc()
+    +storeKycDocument()
+    +getKycStatus()
+  }
+  class "Security Log Service" as SL <<service module>> {
+    +logSecurityEvent()
+  }
+}
+
+package "MySQL persistence" {
+  class "users" as US <<SQL table>> {
+    +id
+    +email
+    +role
+  }
+  class "refresh_tokens" as RT <<SQL table>> {
+    +id
+    +user_id
+  }
+  class "kyc_applications" as KA <<SQL table>> {
+    +id
+    +user_id
+    +status
+  }
+  class "kyc_documents" as KD <<SQL table>> {
+    +id
+    +kyc_application_id
+  }
+  class "wallets" as WA <<SQL table>> {
+    +id
+    +user_id
+    +status
+  }
+}
+
+AR ..> AC : dispatch
+AC ..> AS : calls
+KR ..> KC : dispatch
+KC ..> KS : calls
+AS ..> US : SQL
+AS ..> RT : SQL
+AS ..> SL : logs
+KS ..> KA : SQL
+KS ..> KD : SQL
+KS ..> WA : activates
+KS ..> SL : logs
+
+legend bottom
+Core Auth and KYC services execute SQL directly; no repository class is declared.
+endlegend
+
+@enduml

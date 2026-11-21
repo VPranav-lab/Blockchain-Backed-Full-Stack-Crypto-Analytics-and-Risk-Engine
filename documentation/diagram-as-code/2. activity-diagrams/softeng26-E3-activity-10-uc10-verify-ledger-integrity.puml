@@ -1,0 +1,41 @@
+@startuml CryptoWeb-10-uc10-verify-ledger-integrity
+title CryptoWeb - UC10 - Verify Ledger Integrity
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Administrator|
+start
+:Open settlement/security ledger tools;
+:Select chain and verification range;
+|Ledger Verification Service|
+:Authenticate and enforce admin permission;
+if (Authorized?) then (no)
+  |Administrator|
+  :View access denied;
+  stop
+endif
+:Load committed blocks and items;
+if (Any blocks available?) then (no)
+  |Administrator|
+  :View no committed blocks;
+  stop
+endif
+|Ledger Verification Service|
+:Verify previous-hash links and block hashes;
+:Verify applicable item/Merkle integrity;
+if (Checks pass?) then (yes)
+  :Return valid-chain report;
+else (no)
+  :Return inconsistency details;
+endif
+|Administrator|
+:Inspect verification report;
+stop
+@enduml

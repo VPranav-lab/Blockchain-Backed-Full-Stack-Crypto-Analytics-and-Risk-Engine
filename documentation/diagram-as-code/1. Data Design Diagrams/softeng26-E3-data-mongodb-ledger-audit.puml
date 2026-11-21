@@ -1,0 +1,113 @@
+@startuml CryptoWeb---MongoDB-Settlement-and-Security-Audit-Ledgers
+title CryptoWeb - MongoDB Settlement and Security Audit Ledgers
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 85
+skinparam ranksep 90
+skinparam defaultFontSize 13
+hide circle
+
+entity "ledger_blocks" as LB {
+  * _id : ObjectId <<PK>>
+  --
+  height : Number
+  prevHash : String
+  merkleRoot : String
+  commitKey : String
+  blockHash : String
+  sealedByUserId : String
+  itemsCount : Number
+  status : SEALED
+  createdAt : Date
+}
+entity "ledger_items" as LI {
+  * _id : ObjectId <<PK>>
+  --
+  blockId : ObjectId <<ref ledger_blocks>>
+  blockHeight : Number
+  idx : Number
+  source : String
+  sourceId : Number
+  payloadHash : String
+  payload : Object
+}
+entity "ledger_cursors" as LC {
+  * _id : String <<PK,source>>
+  --
+  lastId : Number
+  updatedAt : Date
+}
+entity "ledger_locks" as LL {
+  * _id : String <<PK,key>>
+  --
+  owner : String
+  expiresAt : Date
+  updatedAt : Date
+}
+entity "ledger_admin_actions" as LA {
+  * _id : ObjectId|String <<PK>>
+  --
+  action : String
+  status : String
+  idempotencyKey : String
+  requestId : String
+  adminUserId : String
+  createdAt : Date
+}
+entity "audit_blocks" as AB {
+  * _id : ObjectId <<PK>>
+  --
+  height : Number
+  prevHash : String
+  merkleRoot : String
+  blockHash : String
+  sealedByUserId : String
+  itemsCount : Number
+  createdAt : Date
+}
+entity "audit_items" as AI {
+  * _id : ObjectId <<PK>>
+  --
+  blockId : ObjectId <<ref audit_blocks>>
+  blockHeight : Number
+  idx : Number
+  source : security_logs
+  sourceId : Number
+  payloadHash : String
+  payload : Object
+}
+entity "audit_cursors" as AC {
+  * _id : String <<PK,source>>
+  --
+  lastId : Number
+  updatedAt : Date
+}
+entity "audit_locks" as AL {
+  * _id : String <<PK,key>>
+  --
+  owner : String
+  expiresAt : Date
+}
+entity "audit_admin_actions" as AA {
+  * _id : ObjectId|String <<PK>>
+  --
+  action : String
+  status : String
+  idempotencyKey : String
+  requestId : String
+  adminUserId : String
+}
+LB ||--o{ LI : items
+AB ||--o{ AI : items
+note bottom of LI
+  Each settlement item points to a MySQL
+  wallet_transactions or trade_fills row
+  through source plus sourceId.
+end note
+note bottom of AI
+  Each security audit item points to a
+  MySQL security_logs row by sourceId.
+end note
+@enduml

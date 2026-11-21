@@ -1,0 +1,64 @@
+@startuml CryptoWeb-06-uc06-execute-market-trade
+title CryptoWeb - UC06 - Execute Simulated Market Trade
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Verified User|
+start
+:Select symbol, BUY/SELL and quantity;
+:Submit simulated market trade;
+|Core Trade API|
+:Authenticate and validate request;
+if (Authorized and valid?) then (no)
+  |Verified User|
+  :View validation/access error;
+  stop
+endif
+:Fetch authoritative spot price;
+if (Price available and within slippage guard?) then (no)
+  |Verified User|
+  :View market price/slippage error;
+  stop
+endif
+|MySQL Settlement Service|
+:Begin transaction;
+:Check duplicate execution reference;
+if (Already settled?) then (yes)
+  :Return existing fill and wallet snapshot;
+  :Commit read-only transaction;
+else (no)
+  :Validate ACTIVE wallet and funds/holdings;
+  if (Settlement permitted?) then (no)
+    :Rollback transaction;
+    |Verified User|
+    :View trade rejection;
+    stop
+  endif
+  :Update wallet and portfolio holdings;
+  :Insert wallet transaction and FILLED trade;
+  :Commit authoritative settlement;
+endif
+|Trade History and Ledger|
+:Attempt MongoDB trade-history projection;
+:Ledger worker may commit audit item later;
+if (History synchronization succeeded?) then (yes)
+  |Verified User|
+  :View executed trade and portfolio result;
+else (no)
+  |Verified User|
+  :View synchronization/processing error;
+  note right
+    The MySQL trade remains settled.
+    Recovery can resynchronize the
+    trade record without a new fill.
+  end note
+endif
+stop
+@enduml

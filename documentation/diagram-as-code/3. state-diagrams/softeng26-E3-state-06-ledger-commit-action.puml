@@ -1,0 +1,38 @@
+@startuml CryptoWeb-state-07-ledger-commit-action
+title CryptoWeb - Ledger Commit Action Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "IN_PROGRESS" as InProgress
+state "SUCCESS" as Success
+state "FAILED" as Failed
+
+[*] --> InProgress : begin settlement or audit commit
+InProgress --> Success : completed or no new records
+InProgress --> Failed : lock contention or commit error
+Failed --> InProgress : retry using same idempotency key
+Success --> Success : repeat request / return previous result
+
+note left of Success
+  SUCCESS is the action outcome.
+  A request with no uncommitted
+  records can also succeed without
+  creating a new block.
+end note
+
+note left of Failed
+  Commit errors are recorded for
+  inspection and retry. This is the
+  state of the administrative action,
+  not a trade-fill status.
+end note
+
+@enduml

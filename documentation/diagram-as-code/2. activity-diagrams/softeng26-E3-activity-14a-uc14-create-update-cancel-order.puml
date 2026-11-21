@@ -1,0 +1,48 @@
+@startuml CryptoWeb-14a-uc14-create-update-cancel-order
+title CryptoWeb - UC14A - Create, Edit or Cancel Conditional Order
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Verified User|
+start
+:Open conditional order interface;
+:Select LIMIT BUY / LIMIT SELL / STOP SELL;
+:Enter symbol, quantity and specified price;
+|Orders Service|
+:Authenticate and validate order fields;
+if (Supported type and positive values?) then (no)
+  |Verified User|
+  :View validation error;
+  stop
+endif
+:Create MongoDB order with PENDING status;
+:Assign unique execution reference;
+|Verified User|
+:View pending order;
+if (Change or cancel order?) then (yes)
+  :Choose edit or cancel;
+  |Orders Service|
+  :Find owned order in PENDING status;
+  if (Still editable?) then (no)
+    |Verified User|
+    :View not editable response;
+    stop
+  endif
+  if (Cancel?) then (yes)
+    :Set order status to CANCELLED;
+  else (no)
+    :Validate updated quantity/price;
+    :Save modified pending order;
+  endif
+endif
+|Verified User|
+:View current order status;
+stop
+@enduml

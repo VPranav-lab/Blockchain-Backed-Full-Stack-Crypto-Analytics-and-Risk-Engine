@@ -1,0 +1,39 @@
+@startuml CryptoWeb-state-08-alert
+title CryptoWeb - Personal Alert Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "OPEN" as Open
+state "ACK" as Ack
+state "CLOSED" as Closed
+
+[*] --> Open : qualifying signal generates alert
+Open --> Ack : user acknowledges
+Open --> Closed : user closes
+Ack --> Closed : user closes
+Ack --> Open : user reopens
+Closed --> Open : user reopens
+Closed --> Ack : user sets acknowledgement
+
+note right of Open
+  Alerts are deduplicated by user,
+  signal key and time bucket. New
+  signals can update scores without
+  resetting ACK or CLOSED status.
+end note
+
+note right of Closed
+  The status API accepts OPEN,
+  ACK and CLOSED directly. There
+  is no stricter transition guard.
+end note
+
+@enduml

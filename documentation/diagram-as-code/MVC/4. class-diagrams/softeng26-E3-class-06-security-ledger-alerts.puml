@@ -1,0 +1,110 @@
+@startuml CryptoWeb-E3-mvc-securityledgeralerts
+title CryptoWeb - Security, Alerts and Tamper-Evident Ledger (MVC view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "React views" {
+  class "LedgerAudit" as LV <<React admin view>> {
+    +LedgerAudit()
+  }
+  class "AlertsCenter" as AV <<React admin view>> {
+    +AlertsCenter()
+  }
+  class "Risk" as RV <<React view>> {
+    +Risk()
+  }
+}
+
+package "API client objects" {
+  class "ledgerApi" as LA <<API object>> {
+    +getBlocks()
+    +verifyChain()
+    +getAuditBlocks()
+  }
+  class "alertsApi" as AA <<API object>> {
+    +getAll()
+    +recompute()
+    +updateStatus()
+  }
+  class "securityApi" as SA <<API object>> {
+    +startSession()
+    +scoreSession()
+    +endSession()
+  }
+}
+
+package "Controllers and services" {
+  class "Ledger Controller" as LC <<controller module>> {
+    +adminCommit()
+    +adminVerify()
+  }
+  class "Ledger Service" as LS <<service module>> {
+    +commitNextBlock()
+    +verifyChain()
+  }
+  class "Alerts Controller" as AC <<controller module>> {
+    +recompute()
+    +list()
+    +patchStatus()
+  }
+  class "Alerts Service" as AS <<service module>> {
+    +recomputeAlertsForUser()
+    +setAlertStatus()
+  }
+  class "Session Risk Controller" as SC <<controller module>> {
+    +start()
+    +score()
+    +current()
+    +end()
+  }
+  class "Session Risk Service" as SS <<service module>> {
+    +startSession()
+    +scoreSession()
+  }
+}
+
+package "Models / collections" {
+  class "LedgerBlock" as B <<MongoDB document>> {
+    +height
+    +blockHash
+    +status
+  }
+  class "LedgerItem" as I <<MongoDB document>> {
+    +blockHeight
+    +source
+    +sourceId
+  }
+  class "Alert" as A <<MongoDB document>> {
+    +userId
+    +status
+    +score
+  }
+}
+
+LV ..> LA
+AV ..> AA
+RV ..> SA
+LA ..> LC : REST
+AA ..> AC : REST
+SA ..> SC : REST
+LC ..> LS
+AC ..> AS
+SC ..> SS
+LS ..> B : MongoDB
+LS ..> I : MongoDB
+AS ..> A : MongoDB
+
+legend bottom
+React Views map to Express Controllers; the existing services remain visible rather than being hidden or renamed as models.
+endlegend
+
+@enduml

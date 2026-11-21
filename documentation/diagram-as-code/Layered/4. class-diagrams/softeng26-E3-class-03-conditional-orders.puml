@@ -1,0 +1,85 @@
+@startuml CryptoWeb-E3-layered-conditionalorders
+title CryptoWeb - Conditional Orders and Scheduled Execution (LAYERED view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "Server_3 HTTP layer" {
+  class "Order Routes" as OR <<router>> {
+    +post()
+    +get()
+    +put()
+    +delete()
+  }
+  class "Order Controller" as OC <<controller module>> {
+    +postorder()
+    +getorders()
+    +updateorder()
+    +deleteorder()
+  }
+}
+
+package "Execution and integration" {
+  class "Order Executor" as OE <<scheduled job module>> {
+    +shouldExecute()
+    +markPending()
+    +markExecuted()
+    +markFailed()
+  }
+  class "Live Price Service" as LP <<service module>> {
+    +getPrice()
+  }
+  class "Core Gateway" as GW <<HTTP gateway module>> {
+    +executeInternalTrade()
+  }
+  class "Core Trade Controller" as CT <<controller module>> {
+    +executeInternal()
+  }
+  class "Core Trade Service" as TS <<service module>> {
+    +buy()
+    +sell()
+  }
+}
+
+package "MongoDB domain models" {
+  class "Order" as O <<Mongoose model>> {
+    +userId
+    +orderType
+    +side
+    +qty
+    +price
+    +status
+    +ocoGroupId
+  }
+  class "Trade" as T <<Mongoose model>> {
+    +referenceId
+    +orderId
+    +fillId
+    +price
+  }
+}
+
+OR ..> OC : routes
+OC ..> O : create/update
+OE ..> O : claim/update
+OE ..> LP : get trigger price
+OE ..> GW : execute when triggered
+GW ..> CT : Core internal REST
+CT ..> TS : settle
+OE ..> T : upsert fill projection
+T "0..*" --> "0..1" O : optional orderId
+
+legend bottom
+Order.price is the user-specified trigger price. Trade.price is the market execution price.
+The optional MongoDB orderId reference is not unique-enforced.
+endlegend
+
+@enduml

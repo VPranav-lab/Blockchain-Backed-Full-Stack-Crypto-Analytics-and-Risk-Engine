@@ -1,0 +1,50 @@
+@startuml E3-deployment-04-ml-risk-mvc
+title CryptoWeb - Deployment 04: ML, Risk and Alerts (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+node "Client browser" as Browser {
+  artifact "Risk / Insights Views" as UI
+  artifact "frontend API client" as Api
+}
+node "Core Node.js :5000" as Core {
+  artifact "ML controllers" as Ctrl
+  artifact "ML service + Mongo persistence" as Svc
+  artifact "security/alerts services" as Alerts
+}
+node "Python FastAPI :8000" as ML {
+  artifact "FastAPI prediction handlers" as Routes
+  artifact "model artifacts / data client" as Models
+}
+node "Server_3 Node.js :4000" as S3 {
+  artifact "ML data controller" as DataRoutes
+  artifact "market Mongoose models" as DataSvc
+}
+database "Core MongoDB\nml_predictions / signals_ml / alerts" as CoreMongo
+database "Server_3 MongoDB\nmarket candles / symbols" as MarketMongo
+artifact "Local ML model files\nweights / security model" as ModelFiles
+
+Browser --> Core : ML requests / alerts API
+Core --> ML : POST /predict POST /security/anomaly-score
+ML ..> S3 : configured market feature API GET /v1/ml/latest_features
+S3 --> MarketMongo : read market data
+ML --> ModelFiles : load models
+Core --> CoreMongo : persist predictions / signals / alerts
+
+note bottom of ML
+  The feature-data API depends on
+  MARKET_DATA_SERVICE_URL configuration.
+  The ML process is not automatically
+  deployed to an independent host.
+end note
+
+@enduml

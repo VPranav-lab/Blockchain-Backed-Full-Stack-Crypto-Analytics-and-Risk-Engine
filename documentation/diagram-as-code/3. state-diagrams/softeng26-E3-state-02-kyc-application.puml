@@ -1,0 +1,42 @@
+@startuml CryptoWeb-state-02-kyc-application
+title CryptoWeb - KYC Application Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "NOT_SUBMITTED" as NotSubmitted
+state "PENDING" as Pending
+state "APPROVED" as Approved
+state "REJECTED" as Rejected
+
+[*] --> NotSubmitted : registration creates application
+NotSubmitted --> Pending : submit valid verification details
+Rejected --> Pending : correct details and resubmit
+Pending --> Approved : administrator approves
+Pending --> Rejected : administrator rejects
+
+note right of NotSubmitted
+  Identity documents may be uploaded
+  before formal submission without
+  changing application status.
+end note
+
+note right of Pending
+  A pending application cannot be
+  submitted again. Only pending
+  applications can be reviewed.
+end note
+
+note right of Approved
+  The approval operation also
+  activates the user's wallet.
+end note
+
+@enduml

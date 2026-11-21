@@ -1,0 +1,85 @@
+@startuml CryptoWeb-E3-layered-portfolioriskml
+title CryptoWeb - Portfolio Risk and Machine Learning (LAYERED view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "Server_3 analytics controllers" {
+  class "Portfolio Risk Controller" as PRC <<controller module>> {
+    +getRiskSummary()
+    +getRiskScenarios()
+    +getCorrelationMatrix()
+    +getShockPropagation()
+  }
+  class "Portfolio Risk Service" as PR <<service module>> {
+    +computePerAssetVolatility()
+    +computeConcentrationRisk()
+    +computeRiskClassification()
+  }
+  class "Correlation Service" as CO <<service module>> {
+    +computeCorrelationMatrix()
+  }
+  class "Scenario Impact Service" as SC <<service module>> {
+    +applyScenarioImpact()
+  }
+}
+
+package "Core prediction integration" {
+  class "ML Controller" as MLC <<controller module>> {
+    +pricePrediction()
+    +listPredictions()
+  }
+  class "ML Service" as MLS <<service module>> {
+    +pricePrediction()
+    +listPredictions()
+  }
+  class "ml_predictions" as MP <<MongoDB collection>> {
+    +userId
+    +model
+    +predictions
+  }
+  class "signals_ml" as SIG <<MongoDB collection>> {
+    +userId
+    +signalType
+    +predictionId
+  }
+  class "ML API (FastAPI)" as PY <<Python API module>> {
+    +predict()
+  }
+}
+
+package "Stored analysis inputs" {
+  class "Candle" as CA <<Mongoose model>> {
+    +symbol
+    +interval
+    +close
+  }
+  class "News" as N <<Mongoose model>> {
+    +title
+    +sentiment
+  }
+}
+
+PRC ..> PR
+PRC ..> CO
+PRC ..> SC
+PR ..> CA
+PR ..> N
+MLC ..> MLS
+MLS ..> PY : HTTP request
+MLS ..> MP : insert prediction
+MLS ..> SIG : insert signal
+
+legend bottom
+The FastAPI ML service is reached over HTTP, not through an in-process class association.
+endlegend
+
+@enduml

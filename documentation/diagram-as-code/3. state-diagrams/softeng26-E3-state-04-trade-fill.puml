@@ -1,0 +1,35 @@
+@startuml CryptoWeb-state-04-trade-fill
+title CryptoWeb - Executed Trade Fill Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "FILLED" as Filled
+state "REVERSED" as Reversed
+
+[*] --> Filled : market-price settlement committed
+Filled --> Reversed : authorized reversal / compensating updates
+
+note right of Filled
+  Records an executed simulated trade.
+  Ledger commitment may occur later;
+  it is tracked using ledger pointers,
+  not through an extra trade status.
+end note
+
+note right of Reversed
+  Reversal is permitted only after
+  business and balance checks. The
+  system creates a compensating wallet
+  transaction and keeps the trade for
+  audit history.
+end note
+
+@enduml

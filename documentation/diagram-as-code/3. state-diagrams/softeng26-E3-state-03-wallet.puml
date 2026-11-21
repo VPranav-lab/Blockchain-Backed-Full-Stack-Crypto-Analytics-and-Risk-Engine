@@ -1,0 +1,36 @@
+@startuml CryptoWeb-state-03-wallet
+title CryptoWeb - Simulated Wallet Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "LOCKED" as Locked
+state "ACTIVE" as Active
+
+[*] --> Locked : wallet created at registration
+Locked --> Active : identity verification approved
+Locked --> Locked : identity verification rejected
+Active --> Active : approved wallet transaction or trade
+
+note left of Locked
+  The wallet is created with zero
+  balance and is not eligible for
+  trading or wallet operations until
+  identity verification is approved.
+end note
+
+note left of Active
+  Deposits, withdrawals, and trades
+  change the balance but not the
+  wallet status. There is no separate
+  CLOSED state in the stored schema.
+end note
+
+@enduml

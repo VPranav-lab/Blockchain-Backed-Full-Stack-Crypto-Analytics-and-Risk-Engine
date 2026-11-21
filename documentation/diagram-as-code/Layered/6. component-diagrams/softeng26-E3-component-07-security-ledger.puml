@@ -1,0 +1,48 @@
+@startuml E3-component-07-security-ledger-layered
+title CryptoWeb - Security, Ledger and Audit Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "Core security" {
+  component "security.routes.js" as SecRoutes
+  component "securityEvents.controller.js" as SecCtrl
+  component "sessionRisk.controller.js" as RiskCtrl
+  component "securityEvents.service.js" as SecSvc
+  component "sessionRisk.service.js" as SessionRisk
+  component "securityLog.service.js" as SecLog
+}
+package "Core ledger" {
+  component "ledger.routes.js" as LedgerRoutes
+  component "ledger.controller.js" as LedgerCtrl
+  component "ledger.service.js" as LedgerSvc
+  component "ledgerAutoCommit.job.js" as SettleJob
+  component "auditLedgerAutoCommit.job.js" as AuditJob
+}
+database "MySQL security / trade records" as SQL
+database "MongoDB ledger / audit blocks" as Mongo
+
+SecRoutes --> SecCtrl
+SecRoutes --> RiskCtrl
+SecCtrl --> SecSvc
+RiskCtrl --> SessionRisk
+SecSvc --> SQL
+SessionRisk --> SQL
+SecLog --> SQL
+LedgerRoutes --> LedgerCtrl
+LedgerCtrl --> LedgerSvc
+SettleJob --> LedgerSvc
+AuditJob --> LedgerSvc
+LedgerSvc --> SQL : source events
+LedgerSvc --> Mongo : hash-linked records
+
+@enduml

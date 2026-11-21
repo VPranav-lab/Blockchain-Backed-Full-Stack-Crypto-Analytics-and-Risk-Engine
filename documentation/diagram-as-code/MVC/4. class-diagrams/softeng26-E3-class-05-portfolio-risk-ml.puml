@@ -1,0 +1,79 @@
+@startuml CryptoWeb-E3-mvc-portfolioriskml
+title CryptoWeb - Portfolio Risk and Machine Learning (MVC view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "React views" {
+  class "Portfolio" as PV <<React view>> {
+    +Portfolio()
+  }
+  class "RiskDashboard" as RD <<React component>> {
+    +RiskDashboard()
+  }
+  class "Insights" as IV <<React view>> {
+    +Insights()
+  }
+}
+
+package "Client API objects" {
+  class "portfolioApi" as PA <<API object>> {
+    +getRiskSummary()
+    +getRiskScenarios()
+    +getCorrelation()
+  }
+  class "mlApi" as MA <<API object>> {
+    +predictPrice()
+    +getPredictions()
+  }
+}
+
+package "Express controllers and services" {
+  class "Portfolio Risk Controller" as PC <<controller module>> {
+    +getRiskSummary()
+    +getRiskScenarios()
+    +getCorrelationMatrix()
+  }
+  class "Portfolio Risk Service" as PS <<service module>> {
+    +computePerAssetVolatility()
+    +computeConcentrationRisk()
+  }
+  class "ML Controller" as MC <<controller module>> {
+    +pricePrediction()
+    +listPredictions()
+  }
+  class "ML Service" as MS <<service module>> {
+    +pricePrediction()
+    +listPredictions()
+  }
+}
+
+package "ML runtime" {
+  class "FastAPI prediction endpoint" as API <<Python HTTP API>> {
+    +POST /predict
+    +returns prediction data
+  }
+}
+
+PV ..> RD
+RD ..> PA
+IV ..> MA
+PA ..> PC : Server_3 REST
+MA ..> MC : Core REST
+PC ..> PS
+MC ..> MS
+MS ..> API : HTTP
+
+legend bottom
+The prediction endpoint is a logical HTTP interface to the Python FastAPI service.
+endlegend
+
+@enduml

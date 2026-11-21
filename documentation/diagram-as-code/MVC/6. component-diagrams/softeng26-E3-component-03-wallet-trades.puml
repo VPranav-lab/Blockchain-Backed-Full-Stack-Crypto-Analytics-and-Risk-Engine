@@ -1,0 +1,55 @@
+@startuml E3-component-03-wallet-trades-mvc
+title CryptoWeb - Wallet and Market Trading Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React views" {
+  component "Trades.jsx" as TradeView
+  component "Wallet.jsx" as WalletView
+}
+package "Frontend API modules" {
+  component "tradeApi.js" as TradeApi
+  component "walletApi.js" as WalletApi
+}
+package "Server_3 controllers and models" {
+  component "trade.controller.js" as TradeCtrl
+  component "wallet.controller.js" as WalletCtrl
+  component "personA.gateway.js" as Gateway
+  component "Trade Mongoose model" as TradeModel
+}
+package "Core controllers and services" {
+  component "trade.controller.js" as CoreTrade
+  component "trade.service.js" as TradeSvc
+  component "wallet.controller.js" as CoreWallet
+  component "wallet.service.js" as WalletSvc
+}
+database "MySQL" as SQL
+database "MongoDB (trades)" as Mongo
+
+TradeView --> TradeApi
+WalletView --> WalletApi
+TradeApi --> TradeCtrl : execute
+WalletApi --> WalletCtrl : deposit / bank
+WalletApi --> CoreWallet : balance / history
+TradeCtrl --> Gateway
+WalletCtrl --> Gateway
+Gateway --> CoreTrade : trade REST
+Gateway --> CoreWallet : wallet REST
+CoreTrade --> TradeSvc
+CoreWallet --> WalletSvc
+TradeSvc --> SQL
+WalletSvc --> SQL
+TradeCtrl --> TradeModel
+TradeModel --> Mongo
+
+@enduml

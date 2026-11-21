@@ -1,0 +1,48 @@
+@startuml E3-component-04-conditional-orders-mvc
+title CryptoWeb - Conditional Order Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React View" {
+  component "Trades.jsx order form / open orders" as OrderView
+}
+package "Frontend API" {
+  component "tradeApi.js" as TradeApi
+}
+package "Server_3 controllers and models" {
+  component "order.controller.js" as OrderCtrl
+  component "Order Mongoose model" as OrderModel
+  component "orderExecuter.js" as Executor
+  component "Trade Mongoose model" as TradeModel
+  component "personA.gateway.js" as Gateway
+}
+package "Core trading" {
+  component "Internal trade API" as InternalApi
+  component "trade.service.js" as TradeSvc
+}
+database "MongoDB" as Mongo
+database "MySQL" as SQL
+
+OrderView --> TradeApi
+TradeApi --> OrderCtrl : order REST
+OrderCtrl --> OrderModel
+OrderModel --> Mongo
+Executor --> OrderModel
+Executor --> Gateway
+Gateway --> InternalApi
+InternalApi --> TradeSvc
+TradeSvc --> SQL
+Executor --> TradeModel : fills
+TradeModel --> Mongo
+
+@enduml

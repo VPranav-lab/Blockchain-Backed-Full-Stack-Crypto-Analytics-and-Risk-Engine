@@ -1,0 +1,43 @@
+@startuml CryptoWeb-05-uc05-browse-public-market-news
+title CryptoWeb - UC05 - Browse Public Dashboard, Market and News
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Public Browser|
+start
+:Open public Dashboard, Market or News page;
+|Market and News Services|
+:Fetch market symbols and available live prices;
+if (Price data available?) then (yes)
+  :Return market summaries;
+else (no)
+  :Return partial or unavailable market state;
+endif
+|Public Browser|
+if (Select cryptocurrency?) then (yes)
+  :Choose asset and candle interval;
+  |Market and News Services|
+  :Validate symbol and interval;
+  :Retrieve stored candles or provider candles;
+  |Public Browser|
+  :View candlestick chart or no-data message;
+endif
+if (Open News?) then (yes)
+  |Market and News Services|
+  :Retrieve available articles;
+  |Public Browser|
+  :View news list or unavailable state;
+endif
+note right
+  Public browsing does not require
+  authentication or KYC.
+end note
+stop
+@enduml

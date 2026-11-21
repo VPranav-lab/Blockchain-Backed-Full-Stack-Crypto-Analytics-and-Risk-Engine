@@ -1,0 +1,87 @@
+@startuml CryptoWeb-E3-layered-marketbacktesting
+title CryptoWeb - Market Data and Historical Backtesting (LAYERED view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "Server_3 routes and controllers" {
+  class "Market Routes" as MR <<router>> {
+    +get()
+  }
+  class "Market Controller" as MC <<controller module>> {
+    +getlivedata()
+    +getMarketSymbols()
+    +getCandles()
+    +getSummary()
+  }
+  class "Backtest Routes" as BR <<router>> {
+    +post()
+    +get()
+  }
+  class "Backtest Controller" as BC <<controller module>> {
+    +postbacktest()
+    +getbacktests()
+  }
+}
+
+package "Domain computation" {
+  class "Binance Candle Service" as BF <<service module>> {
+    +fetchKlines()
+  }
+  class "Live Price Service" as LP <<service module>> {
+    +getPrice()
+  }
+  class "MA Crossover" as SIG <<utility module>> {
+    +generateSignals()
+  }
+  class "Backtest Simulator" as SIM <<utility module>> {
+    +simulateBacktest()
+    +calculateMetrics()
+  }
+}
+
+package "MongoDB models" {
+  class "MarketSymbol" as MS <<Mongoose model>> {
+    +symbol
+  }
+  class "Candle" as C <<Mongoose model>> {
+    +symbol
+    +interval
+    +open
+    +high
+    +low
+    +close
+  }
+  class "Backtest" as B <<Mongoose model>> {
+    +user_id
+    +symbol
+    +strategy
+    +metrics
+    +equity_curve
+  }
+}
+
+MR ..> MC
+BR ..> BC
+MC ..> MS
+MC ..> C
+MC ..> BF
+MC ..> LP
+BC ..> C : historical candles
+BC ..> SIG : signals
+BC ..> SIM : simulation
+BC ..> B : save result
+
+legend bottom
+Backtesting uses stored historical candles, moving-average signals and a simulation utility.
+endlegend
+
+@enduml

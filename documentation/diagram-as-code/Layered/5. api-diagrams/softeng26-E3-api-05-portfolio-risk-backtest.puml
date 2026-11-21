@@ -1,0 +1,45 @@
+@startuml E3_API_05_LAYERED
+title API 05: Portfolio, Backtesting and Risk APIs (LAYERED view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+actor "React client / admin" as Client
+
+component "Server_3 :4000 - Portfolio\nGET /api/portfolio" as API1 <<REST API>>
+component "Server_3 :4000 - Backtest\nPOST /api/backtest\nGET /api/backtest" as API2 <<REST API>>
+component "Server_3 :4000 - Risk analytics\nGET /api/portfolio/risk/news\nGET /api/portfolio/risk/summary\nGET /api/portfolio/risk/scenarios\nGET /api/portfolio/risk/correlation\nGET /api/portfolio/risk/propagation" as API3 <<REST API>>
+
+package "Routing and controller layer" {
+  component "portfolio.controller.js\nbacktest.controller.js\nportfolioRisk.controller.js" as Controllers <<Controllers / route handlers>>
+}
+package "Service and orchestration layer" {
+  component "livePrice.service.js\nportfolioRisk.service.js\ncorrelation.service.js" as Services <<Services / jobs>>
+}
+database "MongoDB: trades, backtest, candle, news" as Storage
+Client --> API1 : HTTP / JSON
+Client --> API2 : HTTP / JSON
+Client --> API3 : HTTP / JSON
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+API3 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads/writes
+
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

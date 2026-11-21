@@ -1,0 +1,110 @@
+@startuml CryptoWeb---MySQL-Identity-and-Security
+title CryptoWeb - MySQL Identity and Security
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 85
+skinparam ranksep 90
+skinparam defaultFontSize 13
+hide circle
+
+entity "users" as U {
+  * id : CHAR(36) <<PK>>
+  --
+  email : VARCHAR(255)
+  role : ENUM
+}
+entity "refresh_tokens" as RT {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  token_hash : VARCHAR(255)
+  revoked : BOOLEAN
+  expires_at : TIMESTAMP
+}
+entity "kyc_applications" as K {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK,UQ>>
+  status : ENUM
+  level : ENUM
+  doc_number_hash : VARCHAR(255) <<UQ>>
+  doc_number_enc : BLOB
+  doc_number_iv : VARBINARY(12)
+  doc_number_tag : VARBINARY(16)
+  reviewed_by : CHAR(36)
+}
+entity "kyc_documents" as KD {
+  * id : BIGINT <<PK>>
+  --
+  * kyc_application_id : BIGINT <<FK>>
+  doc_side : ENUM
+  storage_key : VARCHAR(512)
+  sha256 : VARCHAR(64)
+}
+entity "security_logs" as SL {
+  * id : BIGINT <<PK>>
+  --
+  user_id : CHAR(36) <<FK,nullable>>
+  event_type : VARCHAR(50)
+  ip : VARCHAR(45)
+  metadata : JSON
+  ledger_block_height : INT
+}
+entity "user_devices" as D {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  * device_id : VARCHAR(128) <<UQ(user,device)>>
+  last_ip : VARCHAR(45)
+}
+entity "user_ip_history" as IP {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  * ip : VARCHAR(45) <<UQ(user,ip)>>
+  last_seen : TIMESTAMP
+}
+entity "auth_sessions" as Sess {
+  * id : CHAR(36) <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  device_id : VARCHAR(128)
+  is_active : BOOLEAN
+  last_risk_score : INT
+  active_device_key : VARCHAR(128) <<generated,UQ(user,key)>>
+}
+entity "session_risk_scores" as Risk {
+  * id : BIGINT <<PK>>
+  --
+  * session_id : CHAR(36) <<FK>>
+  * user_id : CHAR(36) <<FK>>
+  risk_score : INT
+  action : ENUM
+  factors : JSON
+}
+entity "session_ml_anomaly_scores" as Anom {
+  * id : BIGINT <<PK>>
+  --
+  * session_id : CHAR(36) <<FK>>
+  * user_id : CHAR(36) <<FK>>
+  anomaly_score : DECIMAL(10,6)
+  features : JSON
+}
+U ||--o{ RT : tokens
+U ||--o| K : applies
+K ||--o{ KD : documents
+U |o--o{ SL : events
+U ||--o{ D : devices
+U ||--o{ IP : IP history
+U ||--o{ Sess : sessions
+Sess ||--o{ Risk : rule scores
+Sess ||--o{ Anom : ML scores
+U ||--o{ Risk : user scores
+U ||--o{ Anom : user ML
+note right of K
+  reviewed_by is stored as CHAR(36),
+  but no SQL FK is declared for it.
+end note
+@enduml

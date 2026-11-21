@@ -1,0 +1,125 @@
+
+@startuml CryptoWeb-Conceptual-Analytics-Audit
+
+title CryptoWeb - Conceptual Analytics and Audit Data Model
+
+!theme plain
+left to right direction
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 110
+skinparam defaultFontSize 13
+
+hide circle
+
+entity "Market Symbol" as Sym {
+  * symbol
+}
+
+entity "Price Candle" as Candle {
+  * symbol, interval, timestamp
+  --
+  OHLCV
+}
+
+entity "Backtest Result" as Backtest {
+  * backtestId
+  --
+  strategy
+  metrics
+}
+
+entity "News Article" as News {
+  * articleId
+  --
+  sentiment
+}
+
+entity "Prediction" as Prediction {
+  * predictionId
+  --
+  model
+  output
+}
+
+entity "ML Signal" as Signal {
+  * signalId
+  --
+  model
+  score
+}
+
+entity "Security Event" as Event {
+  * eventId
+  --
+  eventType
+}
+
+entity "Alert" as Alert {
+  * alertId
+  --
+  category
+  score
+}
+
+entity "Settlement Block" as LedgerBlock {
+  * blockId
+  --
+  blockHash
+}
+
+entity "Settlement Item" as LedgerItem {
+  * itemId
+  --
+  source
+  sourceId
+}
+
+entity "Security Audit Block" as AuditBlock {
+  * blockId
+  --
+  blockHash
+}
+
+entity "Security Audit Item" as AuditItem {
+  * itemId
+  --
+  source
+  sourceId
+}
+
+' Market data
+Sym ||--o{ Candle : historical
+
+' Alert generation - logical links
+Signal .. Alert : may trigger
+Event .. Alert : may inform
+
+' Settlement ledger
+LedgerBlock ||--o{ LedgerItem : contains
+
+' Security audit ledger
+AuditBlock ||--o{ AuditItem : contains
+
+note bottom of LedgerItem
+  References settlement records
+  using source and sourceId.
+end note
+
+note bottom of AuditItem
+  References security records
+  using source and sourceId.
+end note
+
+legend bottom
+  Solid relationships describe
+  domain containment or ownership.
+
+  Dotted relationships describe
+  logical processing associations,
+  not database-enforced foreign keys.
+endlegend
+
+@enduml

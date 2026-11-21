@@ -1,0 +1,48 @@
+@startuml E3-component-06-risk-ml-alerts-layered
+title CryptoWeb - Risk, ML and Alert Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "Server_3 risk subsystem" {
+  component "portfolioRisk.controller.js" as RiskCtrl
+  component "portfolioRisk.service.js" as RiskSvc
+  component "Trade / Candle / News models" as RiskModels
+  component "ml.routes.js ML data endpoints" as MLDataApi
+}
+package "Core ML and alerts" {
+  component "ml.controller.js" as MLCtrl
+  component "ml.service.js" as MLSvc
+  component "alerts.controller.js" as AlertCtrl
+  component "alerts.service.js" as AlertSvc
+}
+package "Python ML service" {
+  component "FastAPI main.py" as FastApi
+  component "model.py / security_anomaly.py" as MLModels
+  component "data_client.py" as DataClient
+}
+database "MongoDB" as Mongo
+
+RiskCtrl --> RiskSvc
+RiskSvc --> RiskModels
+RiskModels --> Mongo
+MLCtrl --> MLSvc
+MLSvc --> FastApi : HTTP
+FastApi --> MLModels
+FastApi --> DataClient
+DataClient --> MLDataApi : feature REST
+MLDataApi --> RiskModels
+MLSvc --> Mongo : predictions / signals
+AlertCtrl --> AlertSvc
+AlertSvc --> Mongo
+
+@enduml

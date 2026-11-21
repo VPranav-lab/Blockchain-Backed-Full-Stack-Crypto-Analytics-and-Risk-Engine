@@ -1,0 +1,50 @@
+@startuml E3-component-04-conditional-orders-layered
+title CryptoWeb - Conditional Order Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "Server_3 :4000" {
+  component "order.routes.js" as OrderRoute
+  component "order.controller.js" as OrderCtrl
+  component "Order Mongoose model" as OrderModel
+  component "orderExecuter.js 5-10 second scheduled job" as Executor
+  component "livePrice.service.js" as LivePrice
+  component "personA.gateway.js" as Gateway
+  component "Trade Mongoose model" as TradeModel
+}
+package "Core :5000" {
+  component "Internal trade API" as InternalApi
+  component "trade.service.js" as TradeSvc
+}
+database "MongoDB orders / trades" as Mongo
+database "MySQL trade fills / wallet" as SQL
+
+OrderRoute --> OrderCtrl
+OrderCtrl --> OrderModel
+OrderModel --> Mongo
+Executor --> OrderModel : scan / update
+Executor --> LivePrice : trigger check
+Executor --> Gateway : execute
+Gateway --> InternalApi : REST
+InternalApi --> TradeSvc
+TradeSvc --> SQL
+Executor --> TradeModel : upsert fill
+TradeModel --> Mongo
+
+note bottom of Executor
+An order executes at Core market price.
+Successful execution updates the Order;
+its OCO sibling may be cancelled.
+end note
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml E3-deployment-02-wallet-trading-mvc
+title CryptoWeb - Deployment 02: Wallet and Market Trading (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+node "Client browser" as Browser {
+  artifact "Wallet / Trades views" as UI
+    artifact "walletApi.js + tradeApi.js" as ClientAPI
+}
+node "Server_3 Node.js :4000" as S3 {
+  artifact "trade/wallet controllers" as S3Ctrl
+  artifact "personA.gateway.js" as Gateway
+  artifact "MongoDB Trade model" as TradeModel
+}
+node "Core Node.js :5000" as Core {
+  artifact "trade / wallet controllers" as CoreCtrl
+  artifact "settlement service modules" as Trading
+  artifact "SQL wallet / holding data access" as Wallet
+}
+database "Core MySQL\nwallets / transactions / holdings / fills" as SQL
+database "Server_3 MongoDB\ntrades (history projection)" as Mongo
+cloud "Binance price API" as Binance
+
+Browser --> S3 : BUY / SELL wallet mutation 
+Browser --> Core : balance / history admin adjustment
+S3 --> Core : trade execute / wallet proxy REST + service credentials
+Core --> SQL : atomic settlement
+Core --> Binance : market-price retrieval
+S3 --> Mongo : synchronize executed fill
+
+note bottom of SQL
+  Core commits wallet updates, holdings,
+  wallet transaction CONFIRMED and fill FILLED.
+  Ledger recording is a separate operation.
+end note
+note bottom of S3
+  MVC view: React Views use API clients; controllers use actual service/model modules.
+end note
+
+@enduml

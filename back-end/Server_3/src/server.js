@@ -5,7 +5,6 @@ const connectDB = require("./config/mongodb");
 
 const PORT = process.env.PORT || 4000;
 
-// Use env variable instead of hardcoding
 connectDB(process.env.MONGO_URI);
 
 app.listen(PORT, () => {

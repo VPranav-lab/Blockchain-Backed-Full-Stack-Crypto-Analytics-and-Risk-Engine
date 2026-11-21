@@ -1,0 +1,47 @@
+@startuml CryptoWeb-09-uc09-predictions-personal-alerts
+title CryptoWeb - UC09 - Predictions and Personal Alerts
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Verified User|
+start
+:Open insights and personal alerts;
+|ML and Alerts Services|
+:Authenticate user;
+:Retrieve prediction history and personal alerts;
+|Verified User|
+:View available results;
+if (Request new price prediction?) then (yes)
+  :Enter symbols and prediction parameters;
+  |ML and Alerts Services|
+  :Validate request and block disallowed debug inputs;
+  if (Request allowed?) then (no)
+    |Verified User|
+    :View validation/permission error;
+    stop
+  endif
+  :Request model inference from ML service;
+  if (Prediction available?) then (yes)
+    :Store prediction and related ML signal;
+    |Verified User|
+    :View prediction output;
+    if (Recompute personal alerts?) then (yes)
+      |ML and Alerts Services|
+      :Recompute alerts from stored signals;
+      |Verified User|
+      :View refreshed personal alerts;
+    endif
+  else (no)
+    |Verified User|
+    :View unavailable-prediction message;
+  endif
+endif
+stop
+@enduml

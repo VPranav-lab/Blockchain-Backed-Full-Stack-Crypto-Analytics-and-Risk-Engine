@@ -1,0 +1,60 @@
+
+@startuml E3_API_02_LAYERED
+title API 02: Wallet APIs (LAYERED view)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 90
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+
+component "Core wallet API :5000\nGET /api/wallet/me\nGET /api/wallet/balance\nGET /api/wallet/transactions\nPOST /api/wallet/deposit\nPOST /api/wallet/withdraw\nGET /api/wallet/bank\nPOST /api/wallet/bank\nPOST /api/wallet/admin/adjust" as CoreApi <<REST API>>
+
+component "Server_3 wallet proxy :4000\nGET /api/wallet/balance\nGET /api/wallet/transactions\nPOST /api/wallet/deposit\nPOST /api/wallet/withdraw\nGET /api/wallet/bank\nPOST /api/wallet/bank" as ProxyApi <<REST API>>
+
+package "Server_3: request forwarding" {
+  component "wallet.controller.js\nwithdrawalBank.controller.js" as ProxyCtrl <<Controller modules>>
+  component "personA.gateway.js" as Gateway <<Gateway service>>
+}
+
+package "Core: authoritative wallet processing" {
+  component "wallet.controller.js" as CoreCtrl <<Controller module>>
+  component "wallet.service.js" as CoreService <<Service module>>
+  component "ledger.service.js" as LedgerService <<Audit / ledger service>>
+}
+
+database "MySQL\nwallets, wallet_transactions,\nwithdrawal-bank records" as MySQL
+
+actor "React Wallet / Admin UI" as Client
+
+Client --> CoreApi : GET balance / transactions\nPOST admin adjustment
+Client --> ProxyApi : POST deposit / withdraw\nGET / POST bank details
+
+ProxyApi --> ProxyCtrl : dispatch
+ProxyCtrl --> Gateway : call
+Gateway --> CoreApi : forward deposits, withdrawals,\nbank, and other proxy requests
+
+CoreApi --> CoreCtrl : dispatch
+CoreCtrl --> CoreService : validate and execute
+CoreService --> MySQL 
+CoreCtrl ..> LedgerService : best-effort ledger commit\nfor applicable mutations
+
+note left of ProxyApi
+  React uses Server_3 for bank details,
+  deposits and withdrawals.
+  Server_3 does not authoritatively
+  settle these operations.
+end note
+
+note bottom of CoreApi
+  React uses Core directly for wallet
+  balance, transaction history,
+  and admin adjustments.
+  Core also exposes wallet routes
+  used through the Server_3 proxy.
+end note
+
+@enduml

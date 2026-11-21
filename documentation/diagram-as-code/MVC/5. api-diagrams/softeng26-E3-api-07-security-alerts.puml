@@ -1,0 +1,44 @@
+@startuml E3_API_07_MVC
+title API 07: Security Monitoring and Alert APIs (MVC view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+package "Presentation (React)" {
+  component "admin/tabs/SecurityMonitor.jsx\nadmin/tabs/AlertsCenter.jsx" as UI <<View>>
+  component "securityApi.js\nalertApi.js" as Adapter <<Frontend API modules>>
+}
+
+component "Core :5000 - Session/security\nGET /api/security/health\nGET /api/security/me/features\nGET /api/security/me/events\nPOST /api/security/session/start\nPOST /api/security/session/score\nGET /api/security/session/current\nPOST /api/security/session/end" as API1 <<REST API>>
+component "Core :5000 - Personal and admin alerts\nGET /api/alerts\nGET /api/alerts/admin\nPOST /api/alerts/recompute\nPATCH /api/alerts/:id" as API2 <<REST API>>
+
+package "HTTP controllers and application logic" {
+  component "securityFeatures.controller.js\nsecurityEvents.controller.js\nsessionRisk.controller.js\nalerts.controller.js" as Controllers <<Express/FastAPI controllers>>
+  component "sessionRisk.service.js\nalerts.service.js\nsecurityFeatures.service.js" as Services <<Existing service modules>>
+}
+database "MySQL: security_logs, sessions,\nuser security data\nMongoDB: alerts, signals" as Storage
+UI --> Adapter : invokes
+
+Adapter --> API1 : REST
+Adapter --> API2 : REST
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads/writes
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

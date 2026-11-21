@@ -1,0 +1,49 @@
+@startuml E3-component-07-security-ledger-mvc
+title CryptoWeb - Security, Ledger and Audit Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React administrative / user views" {
+  component "SecurityMonitor.jsx" as SecurityView
+  component "LedgerAudit.jsx" as LedgerView
+  component "Trades.jsx trade audit receipt" as TradeView
+}
+package "Frontend API modules" {
+  component "securityApi.js" as SecurityApi
+  component "ledgerApi.js" as LedgerApi
+}
+package "Core controller modules" {
+  component "securityEvents.controller.js" as SecCtrl
+  component "ledger.controller.js" as LedgerCtrl
+}
+package "Core services / jobs" {
+  component "securityEvents.service.js" as SecSvc
+  component "ledger.service.js" as LedgerSvc
+  component "ledger / audit commit jobs" as LedgerJobs
+}
+database "MySQL" as SQL
+database "MongoDB (ledger blocks)" as Mongo
+
+SecurityView --> SecurityApi
+LedgerView --> LedgerApi
+TradeView --> LedgerApi
+SecurityApi --> SecCtrl
+LedgerApi --> LedgerCtrl
+SecCtrl --> SecSvc
+LedgerCtrl --> LedgerSvc
+LedgerJobs --> LedgerSvc
+SecSvc --> SQL
+LedgerSvc --> SQL
+LedgerSvc --> Mongo
+
+@enduml

@@ -1,0 +1,67 @@
+
+@startuml E3_API_03_LAYERED
+title API 03: Market Trades and Conditional Order APIs (LAYERED view)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+' API interfaces based on actual routes.
+
+actor "React client / admin" as Client
+
+component "Server_3 :4000 - Server_3 market trades\nPOST /api/trades/execute_trade\nGET /api/trades/get_trades" as API1 <<REST API>>
+
+component "Server_3 :4000 - Server_3 conditional orders\nPOST /api/orders\nGET /api/orders\nPUT /api/orders/:id\nDELETE /api/orders/:id" as API2 <<REST API>>
+
+component "Core :5000 - Core trading\nPOST /api/trade/buy\nPOST /api/trade/sell\nPOST /api/trade/execute\nPOST /api/trade/fills/:id/reverse\nGET /api/trade/fills\nGET /api/trade/fills/by-reference/:referenceId\nGET /api/trade/fills/:id" as API3 <<REST API>>
+
+component "Core :5000 - Core internal execution\nPOST /api/internal/trade/execute\nGET /api/internal/trade/fills\nGET /api/internal/trade/fills/by-reference/:referenceId" as API4 <<REST API>>
+
+package "Routing and controller layer" {
+  component "trade.controller.js (Server_3)\norder.controller.js (Server_3)\ntrade.controller.js (Core)" as Controllers <<Controllers / route handlers>>
+}
+
+package "Service and orchestration layer" {
+  component "personA.gateway.js\ntrade.service.js (Core)\norderExecuter.js (scheduled job)" as Services <<Services / jobs>>
+}
+
+database "MySQL: trade_fills, wallet_transactions,\nportfolio_holdings\nMongoDB: orders, trades" as Storage
+
+
+Client --> API2 : conditional-order requests
+Client --> API1 : market-trade requests
+Client --> API3 : direct reversal endpoint\nPOST /api/trade/fills/:id/reverse
+
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+API3 --> Controllers : dispatch
+API4 --> Controllers : dispatch
+
+Controllers --> Services : calls (as implemented)
+Services --> Storage : reads / writes
+Controllers ..> Storage : direct model access where used
+
+Services ..> API3 : gateway: POST /api/trade/execute
+Services ..> API4 : scheduled order executor:\nPOST /api/internal/trade/execute
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+
+note bottom of Services
+  A LIMIT/STOP order is stored first.
+  On trigger, Core settles at market price.
+  Server_3 then stores/synchronizes trade history.
+end note
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml E3_API_04_LAYERED
+title API 04: Market, News and Watchlist APIs (LAYERED view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+actor "React client / admin" as Client
+
+component "Server_3 :4000 - Market data\nPOST /api/market/activate\nGET /api/market/livedata\nGET /api/market/symbols\nGET /api/market/candles\nGET /api/market/summary\nGET /api/market/summary/allcoins" as API1 <<REST API>>
+component "Server_3 :4000 - News\nGET /api/news\nGET /api/news/latest" as API2 <<REST API>>
+component "Server_3 :4000 - Watchlist\nPOST /api/watchlist\nGET /api/watchlist\nDELETE /api/watchlist/:symbol" as API3 <<REST API>>
+
+package "Routing and controller layer" {
+  component "market.controller.js\nnews.routes.js (inline handlers)\nwatchlist.controller.js" as Controllers <<Controllers / route handlers>>
+}
+package "Service and orchestration layer" {
+  component "binanceLive.service.js\nnewsScheduler.js" as Services <<Services / jobs>>
+}
+database "MongoDB: marketSymbol, candle,\nnews, watchlist" as Storage
+Client --> API1 : HTTP / JSON
+Client --> API2 : HTTP / JSON
+Client --> API3 : HTTP / JSON
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+API3 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads / writes
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

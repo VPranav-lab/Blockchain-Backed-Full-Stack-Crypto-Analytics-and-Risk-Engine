@@ -1,0 +1,40 @@
+@startuml CryptoWeb-state-09-refresh-token
+title CryptoWeb - Refresh Token Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "ACTIVE" as Active
+state "REVOKED" as Revoked
+state "EXPIRED" as Expired
+
+[*] --> Active : login or token rotation
+Active --> Revoked : refresh-token rotation or logout
+Active --> Expired : expires_at reached
+
+note right of Active
+  ACTIVE means revoked is false
+  and expires_at is in the future.
+  The token is stored as a hash.
+end note
+
+note right of Revoked
+  Refresh/logout revokes existing
+  active refresh tokens for the user.
+  Existing tokens cannot be reused.
+end note
+
+note right of Expired
+  EXPIRED is derived from expires_at,
+  not a stored ENUM value. No state
+  change is necessary for expiry.
+end note
+
+@enduml

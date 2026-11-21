@@ -1,0 +1,103 @@
+@startuml CryptoWeb-E3-layered-securityledgeralerts
+title CryptoWeb - Security, Alerts and Tamper-Evident Ledger (LAYERED view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "Core API controllers" {
+  class "Ledger Controller" as LC <<controller module>> {
+    +adminCommit()
+    +adminVerify()
+    +getTradeReceipt()
+  }
+  class "Session Risk Controller" as SC <<controller module>> {
+    +start()
+    +score()
+    +current()
+    +end()
+  }
+  class "Alerts Controller" as AC <<controller module>> {
+    +recompute()
+    +list()
+    +patchStatus()
+  }
+}
+
+package "Business services" {
+  class "Ledger Service" as LS <<service module>> {
+    +commitNextBlock()
+    +verifyChain()
+    +getTradeReceipt()
+    +commitNextAuditBlock()
+  }
+  class "Session Risk Service" as SS <<service module>> {
+    +startSession()
+    +scoreSession()
+    +endSession()
+  }
+  class "Alerts Service" as AS <<service module>> {
+    +recomputeAlertsForUser()
+    +listAlertsForUser()
+    +setAlertStatus()
+  }
+  class "Security Log Service" as LOG <<service module>> {
+    +logSecurityEvent()
+  }
+}
+
+package "Persistent records" {
+  class "wallet_transactions" as TX <<MySQL table>> {
+    +id
+    +ledger_block_height
+  }
+  class "trade_fills" as TF <<MySQL table>> {
+    +id
+    +ledger_block_height
+  }
+  class "security_logs" as SL <<MySQL table>> {
+    +id
+    +user_id
+    +event_type
+  }
+  class "ledger_blocks" as LB <<MongoDB collection>> {
+    +height
+    +blockHash
+    +status
+  }
+  class "ledger_items" as LI <<MongoDB collection>> {
+    +blockHeight
+    +source
+    +sourceId
+  }
+  class "alerts" as AL <<MongoDB collection>> {
+    +userId
+    +status
+    +score
+  }
+}
+
+LC ..> LS
+SC ..> SS
+AC ..> AS
+SS ..> LOG : logs
+SS ..> SL : SQL
+LS ..> TX : read/update pointers
+LS ..> TF : read/update pointers
+LS ..> SL : audit source
+LS ..> LB : writes blocks
+LS ..> LI : writes items
+AS ..> AL : MongoDB writes
+
+legend bottom
+The ledger is a hash-linked audit store; it is not a public decentralized blockchain.
+endlegend
+
+@enduml

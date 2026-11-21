@@ -1,0 +1,41 @@
+@startuml E3_API_07_LAYERED
+title API 07: Security Monitoring and Alert APIs (LAYERED view)
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+
+' REST interfaces are grounded in the Express/FastAPI route declarations.
+' Layered and MVC are two views of the existing CryptoWeb codebase, not separate implementations.
+actor "React client / admin" as Client
+
+component "Core :5000 - Session/security\nGET /api/security/health\nGET /api/security/me/features\nGET /api/security/me/events\nPOST /api/security/session/start\nPOST /api/security/session/score\nGET /api/security/session/current\nPOST /api/security/session/end" as API1 <<REST API>>
+component "Core :5000 - Personal and admin alerts\nGET /api/alerts\nGET /api/alerts/admin\nPOST /api/alerts/recompute\nPATCH /api/alerts/:id" as API2 <<REST API>>
+
+package "Routing and controller layer" {
+  component "securityFeatures.controller.js\nsecurityEvents.controller.js\nsessionRisk.controller.js\nalerts.controller.js" as Controllers <<Controllers / route handlers>>
+}
+package "Service and orchestration layer" {
+  component "sessionRisk.service.js\nalerts.service.js\nsecurityFeatures.service.js" as Services <<Services / jobs>>
+}
+database "MySQL: security_logs, sessions,\nuser security data\nMongoDB: alerts, signals" as Storage
+Client --> API1 : HTTP / JSON
+Client --> API2 : HTTP / JSON
+API1 --> Controllers : dispatch
+API2 --> Controllers : dispatch
+Controllers --> Services : calls
+Services --> Storage : reads/writes
+
+note bottom of Storage
+  Database objects summarized by domain;
+  this is an API interaction diagram,
+  not a physical ER diagram.
+end note
+@enduml

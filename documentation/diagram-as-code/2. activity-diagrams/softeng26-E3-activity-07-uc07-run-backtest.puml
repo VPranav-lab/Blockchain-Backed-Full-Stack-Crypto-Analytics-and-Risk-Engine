@@ -1,0 +1,39 @@
+@startuml CryptoWeb-07-uc07-run-backtest
+title CryptoWeb - UC07 - Run Historical Strategy Backtest
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Verified User|
+start
+:Select symbol, interval and date range;
+:Set MA windows and initial capital;
+:Request historical backtest;
+|Backtesting Service|
+:Authenticate and validate strategy settings;
+if (Valid interval, dates and parameters?) then (no)
+  |Verified User|
+  :View parameter error;
+  stop
+endif
+:Fetch historical OHLCV candles from Binance;
+if (Sufficient history?) then (no)
+  |Verified User|
+  :View insufficient/unavailable data error;
+  stop
+endif
+|Backtesting Service|
+:Generate moving-average crossover signals;
+:Simulate hypothetical trades and equity curve;
+:Calculate returns, drawdown and trade metrics;
+:Store backtest result in MongoDB;
+|Verified User|
+:Review strategy metrics and simulation;
+stop
+@enduml

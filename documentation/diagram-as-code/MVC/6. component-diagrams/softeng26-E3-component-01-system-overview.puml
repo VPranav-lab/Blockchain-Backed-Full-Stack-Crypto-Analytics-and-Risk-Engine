@@ -1,0 +1,53 @@
+@startuml E3-component-01-system-overview-mvc
+title CryptoWeb - System Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React presentation (View)" {
+  component "Pages / UI components" as View
+  component "AuthContext.jsx" as Context
+  component "src/api/* modules" as Api
+}
+package "Server_3 Express" {
+  component "Route / controller modules" as S3Ctrl
+  component "Mongoose models + services" as S3Models
+}
+package "Core Express" {
+  component "Route / controller modules" as CoreCtrl
+  component "Services and SQL / Mongo access" as CoreModels
+}
+component "FastAPI ML service" as ML
+
+database "MySQL" as SQL
+database "MongoDB" as Mongo
+
+View --> Context : session state
+View --> Api : invokes
+Context --> Api
+Api --> S3Ctrl : market / trade
+Api --> CoreCtrl : identity / wallet
+S3Ctrl --> S3Models
+S3Ctrl --> CoreCtrl : settlement API
+CoreCtrl --> CoreModels
+CoreModels --> ML : prediction / scoring
+CoreModels --> SQL
+CoreModels --> Mongo
+S3Models --> Mongo
+
+note bottom of Api
+  MVC is a responsibility-oriented view
+  of existing React modules, controllers,
+  models and services; not a second codebase.
+end note
+
+@enduml

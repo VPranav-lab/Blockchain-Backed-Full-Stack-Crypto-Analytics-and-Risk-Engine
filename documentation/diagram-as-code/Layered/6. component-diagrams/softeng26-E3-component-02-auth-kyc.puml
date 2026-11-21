@@ -1,0 +1,44 @@
+@startuml E3-component-02-auth-kyc-layered
+title CryptoWeb - Authentication and KYC Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "Core HTTP routing" {
+  component "auth.routes.js" as AuthRoutes
+  component "kyc.routes.js" as KycRoutes
+}
+package "Core controller modules" {
+  component "auth.controller.js" as AuthCtrl
+  component "kyc.controller.js" as KycCtrl
+}
+package "Core service modules" {
+  component "auth.service.js" as AuthService
+  component "kyc.service.js" as KycService
+  component "securityTracking.service.js" as Tracking
+  component "securityLog.service.js" as SecurityLog
+}
+database "MySQL users / sessions / KYC" as SQL
+
+AuthRoutes --> AuthCtrl
+KycRoutes --> KycCtrl
+AuthCtrl --> AuthService
+KycCtrl --> KycService
+AuthService --> Tracking
+AuthService --> SecurityLog
+KycService --> SecurityLog
+AuthService --> SQL
+KycService --> SQL
+Tracking --> SQL
+SecurityLog --> SQL
+
+@enduml

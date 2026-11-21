@@ -1,0 +1,50 @@
+@startuml E3-deployment-03-orders-market-layered
+title CryptoWeb - Deployment 03: Orders and Market Feeds (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+node "Client browser" as Browser {
+  artifact "Market / orders React UI" as UI
+}
+node "Server_3 Node.js :4000" as S3 {
+  artifact "order.routes / controllers" as Routes
+  artifact "orderExecuter.js (5-10s timer)" as Executor
+  artifact "candle/news schedulers" as Ingest
+  artifact "livePrice.service.js" as Prices
+  artifact "personA.gateway.js" as Gateway
+}
+node "Core Node.js :5000" as Core {
+  artifact "internal trade routes / controllers" as CoreRoutes
+  artifact "trade.service.js" as TradeService
+}
+database "Server_3 MongoDB\norders / trades / candles / news" as Mongo
+database "Core MySQL\ntrade_fills + wallet data" as SQL
+cloud "Binance live prices / REST" as Binance
+cloud "News RSS / market sources" as News
+
+Browser --> S3 : orders / market APIs
+S3 --> Mongo : store pending orders and synchronized trades
+S3 --> Binance : WSS market stream / HTTPS
+S3 --> News : RSS / HTTP ingest
+S3 --> Core : internal execution REST x-internal-key
+Core --> SQL : market-price settlement
+Core --> Binance : execution price REST
+
+note bottom of S3
+  The order executor and market/news
+  schedulers run inside the Server_3
+  Node.js process (not separate servers).
+  Trigger price is not a guaranteed
+  execution price.
+end note
+
+@enduml

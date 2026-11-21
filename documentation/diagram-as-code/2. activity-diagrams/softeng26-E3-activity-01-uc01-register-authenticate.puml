@@ -1,0 +1,49 @@
+@startuml CryptoWeb-01-uc01-register-authenticate
+title CryptoWeb - UC01 - Register and Authenticate
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Visitor / Registered User|
+start
+:Choose register or sign in;
+if (Register?) then (yes)
+  :Enter email, phone and password;
+  |Core Auth Service|
+  :Validate data and check duplicates;
+  if (Valid and unique?) then (yes)
+    :Hash password;
+    :Create user, initial KYC and LOCKED wallet in MySQL;
+    :Commit registration;
+    :Record registration/security context;
+    |Visitor / Registered User|
+    :View registration confirmation;
+  else (no)
+    |Visitor / Registered User|
+    :View validation/duplicate error;
+  endif
+else (no)
+  :Submit account credentials;
+  |Core Auth Service|
+  :Find active account and compare password hash;
+  if (Credentials accepted?) then (yes)
+    :Capture device/IP context;
+    :Issue access and refresh tokens;
+    :Store hashed refresh token;
+    :Record successful login;
+    |Visitor / Registered User|
+    :Open authorized session;
+  else (no)
+    :Record login failure;
+    |Visitor / Registered User|
+    :View authentication error;
+  endif
+endif
+stop
+@enduml

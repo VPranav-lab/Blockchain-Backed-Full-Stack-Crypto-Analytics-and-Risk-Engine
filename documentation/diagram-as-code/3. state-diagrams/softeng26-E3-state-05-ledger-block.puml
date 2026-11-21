@@ -1,0 +1,34 @@
+@startuml CryptoWeb-state-06-ledger-block
+title CryptoWeb - Settlement and Security Audit Block Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "SEALED" as Sealed
+state "FINALIZED" as Finalized
+
+[*] --> Sealed : successful commit creates block and items
+Sealed --> Finalized : administrator finalizes [integrity checks pass]
+
+note right of Sealed
+  Blocks are stored in separate
+  settlement and security-audit
+  collections. Each new block has
+  a computed hash and linked items.
+end note
+
+note right of Finalized
+  Finalization checks the Merkle root,
+  commit key and block hash before
+  updating the block. Failed checks
+  leave the block SEALED.
+end note
+
+@enduml

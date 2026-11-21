@@ -1,0 +1,102 @@
+@startuml CryptoWeb---MySQL-Accounts-Wallets-and-Trades
+title CryptoWeb - MySQL Accounts Wallets and Trades
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 85
+skinparam ranksep 90
+skinparam defaultFontSize 13
+hide circle
+
+entity "users" as U {
+  * id : CHAR(36) <<PK>>
+  --
+  * email : VARCHAR(255) <<UQ>>
+  * phone : VARCHAR(30) <<UQ>>
+  password_hash : VARCHAR(255)
+  role : ENUM(user,admin)
+  is_active : BOOLEAN
+}
+entity "wallets" as W {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK,UQ>>
+  * balance : DECIMAL(18,2)
+  * currency : CHAR(10)
+  * status : ENUM(LOCKED,ACTIVE)
+}
+entity "wallet_transactions" as WT {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  * type : ENUM
+  * amount : DECIMAL(18,2)
+  * balance_after : DECIMAL(18,2)
+  reference_id : VARCHAR(64) <<UQ(user,ref)>>
+  request_id : VARCHAR(64) <<UQ>>
+  status : ENUM
+  ledger_block_height : INT
+  ledger_item_idx : INT
+}
+entity "wallet_transaction_lines" as WTL {
+  * id : BIGINT <<PK>>
+  --
+  * tx_id : BIGINT <<FK>>
+  account : VARCHAR(32)
+  user_id : CHAR(36)
+  currency : CHAR(10)
+  delta : DECIMAL(18,2)
+}
+entity "withdrawal_accounts" as WA {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK,UQ>>
+  bank_name : VARCHAR(100)
+  account_number : VARCHAR(50)
+  iban : VARCHAR(34)
+  bic : VARCHAR(11)
+  ifsc_code : VARCHAR(20)
+}
+entity "portfolio_holdings" as H {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  * symbol : VARCHAR(20) <<UQ(user,symbol)>>
+  quantity : DECIMAL(36,18)
+  avg_cost : DECIMAL(18,8)
+}
+entity "trade_fills" as F {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : CHAR(36) <<FK>>
+  wallet_tx_id : BIGINT <<FK,nullable>>
+  reference_id : CHAR(36) <<UQ(user,ref)>>
+  symbol : VARCHAR(20)
+  side : ENUM(BUY,SELL)
+  qty : DECIMAL(36,18)
+  price : DECIMAL(18,8)
+  gross_quote : DECIMAL(18,2)
+  fee_quote : DECIMAL(18,2)
+  net_quote : DECIMAL(18,2)
+  status : ENUM
+  reversed_at : TIMESTAMP
+  reversal_wallet_tx_id : BIGINT
+  ledger_block_height : BIGINT
+}
+U ||--o| W : owns
+U ||--o| WA : withdrawal
+U ||--o{ WT : records
+U ||--o{ H : holds
+U ||--o{ F : executes
+WT ||--o{ WTL : lines
+WT |o--o{ F : linked
+note bottom of W
+  Wallet transactions belong to users;
+  no wallet_id FK exists in the table.
+end note
+note bottom of F
+  Ledger pointers are stored as scalar fields.
+  No foreign key to MongoDB is enforced.
+end note
+@enduml

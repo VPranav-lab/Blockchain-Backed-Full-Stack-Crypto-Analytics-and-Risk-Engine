@@ -1,0 +1,53 @@
+@startuml E3-deployment-01-overview-mvc
+title CryptoWeb - Deployment 01: Logical Runtime Overview (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+node "Client device" as Device <<device>> {
+  node "Web browser" as Browser <<executionEnvironment>> {
+    artifact "React Views\nAPI client modules" as UI
+  }
+}
+node "Server_3 process :4000" as S3 <<executionEnvironment>> {
+  artifact "Express Controllers" as S3Routes
+  artifact "Mongoose Models + services" as S3Logic
+}
+node "Core process :5000" as Core <<executionEnvironment>> {
+  artifact "Express Controllers" as CoreRoutes
+  artifact "Services + SQL/Mongo data access" as CoreServices
+}
+node "Python ML process :8000" as ML <<executionEnvironment>> {
+  artifact "FastAPI inference handlers" as MLArtifact
+}
+database "MySQL\nCore SQL schema" as Sql
+database "MongoDB\nServer_3: Crypto_data" as MarketMongo
+database "MongoDB\nCore: configured DB" as CoreMongo
+cloud "Market and news providers" as Providers
+
+Device --> S3 : HTTP/JSON market / orders
+Device --> Core : HTTP/JSON identity / wallet
+S3 --> Core : HTTP/JSON internal settlement / wallet proxy
+Core --> ML : HTTP/JSON predict / anomaly
+ML ..> S3 : optional feature-data API
+S3 --> MarketMongo : Mongoose
+Core --> Sql : MySQL client
+Core --> CoreMongo : native Mongo driver
+S3 --> Providers : HTTPS / WSS / RSS
+Core --> Providers : HTTPS price quotes
+
+legend bottom
+Runtime/process topology - not a claim that each process runs on a separate physical host.
+Core and Server_3 MongoDB names are distinct logical databases; host placement is configurable.
+External TLS and reverse-proxy deployment details are unspecified by the repository.
+endlegend
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml CryptoWeb-E3-mvc-marketbacktesting
+title CryptoWeb - Market Data and Historical Backtesting (MVC view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "React views" {
+  class "MarketPage" as MV <<React view>> {
+    +MarketPage()
+  }
+  class "StrategyPage" as SV <<React view>> {
+    +StrategyPage()
+  }
+}
+
+package "Frontend adapters" {
+  class "marketApi" as MA <<API object>> {
+    +symbols()
+    +summaryAll()
+    +live()
+    +candles()
+  }
+  class "backtestApi" as BA <<API object>> {
+    +run()
+    +getAll()
+  }
+}
+
+package "Server_3 controllers" {
+  class "Market Controller" as MC <<controller module>> {
+    +getMarketSymbols()
+    +getCandles()
+    +getSummary()
+  }
+  class "Backtest Controller" as BC <<controller module>> {
+    +postbacktest()
+    +getbacktests()
+  }
+}
+
+package "Models and calculation" {
+  class "MarketSymbol" as MS <<Mongoose model>> {
+    +symbol
+  }
+  class "Candle" as C <<Mongoose model>> {
+    +symbol
+    +interval
+    +close
+  }
+  class "Backtest" as B <<Mongoose model>> {
+    +user_id
+    +symbol
+    +metrics
+  }
+  class "Backtest Simulator" as SIM <<utility module>> {
+    +simulateBacktest()
+    +calculateMetrics()
+  }
+}
+
+MV ..> MA
+SV ..> BA
+MA ..> MC : REST
+BA ..> BC : REST
+MC ..> MS
+MC ..> C
+BC ..> C
+BC ..> SIM
+BC ..> B
+
+legend bottom
+Views are React function components; stored market candles are MongoDB models.
+endlegend
+
+@enduml

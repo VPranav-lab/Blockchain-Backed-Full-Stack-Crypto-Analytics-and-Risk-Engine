@@ -17,8 +17,7 @@ const { generateScenarioFromNews } =
 const { applyScenarioImpact } =
   require("../services/scenarioImpact.service");
 
-// Trade qty/price are stored as strings for precision. Always coerce explicitly
-// before doing arithmetic to avoid string concatenation and NaN propagation.
+
 function toNum(v, fallback = 0) {
   if (v == null) return fallback;
   if (v && typeof v === "object" && v._bsontype === "Decimal128" && typeof v.toString === "function") {
@@ -29,7 +28,7 @@ function toNum(v, fallback = 0) {
 }
 
 function tradeQty(t) {
-  // Backward-compatible read: some older code used `quantity` while the schema uses `qty`
+  
   return toNum(t?.qty ?? t?.quantity, 0);
 }
 

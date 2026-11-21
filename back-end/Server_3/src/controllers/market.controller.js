@@ -29,7 +29,7 @@ exports.activateSymbol = async (req, res) => {
       return res.status(400).json({ message: "symbol is required" });
     }
 
-    // Check if symbol exists in MarketSymbol
+    
     const marketSymbol = await MarketSymbol.findOne({ symbol });
 
     if (!marketSymbol) {
@@ -38,7 +38,7 @@ exports.activateSymbol = async (req, res) => {
       });
     }
 
-    // If already enabled → do nothing
+    
     if (marketSymbol.enabled) {
       return res.json({
         message: `${symbol} already active`,
@@ -46,11 +46,11 @@ exports.activateSymbol = async (req, res) => {
       });
     }
 
-    // Enable symbol
+    
     marketSymbol.enabled = true;
     await marketSymbol.save();
 
-    // IMMEDIATE candle bootstrap
+  
     await ingestDailyCandles(symbol, 365);
     await ingestHourlyCandles(symbol, 720);
     console.log(`Activated symbol ${symbol} and bootstrapped candles`);
@@ -170,7 +170,7 @@ exports.getSummary = async (req, res) => {
 
 exports.getAllSummaries = async (req, res) => {
   try {
-    // 1️⃣ Get enabled symbols from DB
+   
     const enabledSymbols = await MarketSymbol.find(
       {},
       { symbol: 1, _id: 0 }
@@ -178,13 +178,13 @@ exports.getAllSummaries = async (req, res) => {
 
     const symbolSet = new Set(enabledSymbols.map(s => s.symbol));
 
-    // 2️⃣ Fetch all tickers
+    
     const response = await axios.get(
       "https://api.binance.com/api/v3/ticker/24hr",
       { timeout: 8000 }
     );
 
-    // 3️⃣ Filter only DB symbols
+    
     const summaries = response.data
       .filter(item => symbolSet.has(item.symbol))
       .map(item => ({

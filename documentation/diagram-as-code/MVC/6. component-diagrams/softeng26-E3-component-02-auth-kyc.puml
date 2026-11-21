@@ -1,0 +1,48 @@
+@startuml E3-component-02-auth-kyc-mvc
+title CryptoWeb - Authentication and KYC Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React views" {
+  component "Login.jsx / Register.jsx" as AuthView
+  component "Kyc.jsx" as KycView
+  component "KycManagement.jsx" as AdminView
+  component "AuthContext.jsx" as Context
+}
+package "Frontend API modules" {
+  component "authApi.js" as AuthApi
+  component "kycApi.js" as KycApi
+}
+package "Core controllers" {
+  component "auth.controller.js" as AuthCtrl
+  component "kyc.controller.js" as KycCtrl
+}
+package "Core services" {
+  component "auth.service.js" as AuthService
+  component "kyc.service.js" as KycService
+}
+database "MySQL identity / KYC records" as SQL
+
+AuthView --> Context
+Context --> AuthApi
+AuthView --> AuthApi
+KycView --> KycApi
+AdminView --> KycApi
+AuthApi --> AuthCtrl : REST
+KycApi --> KycCtrl : REST
+AuthCtrl --> AuthService
+KycCtrl --> KycService
+AuthService --> SQL
+KycService --> SQL
+
+@enduml

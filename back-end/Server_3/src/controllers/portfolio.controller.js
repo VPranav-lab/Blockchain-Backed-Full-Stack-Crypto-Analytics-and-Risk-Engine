@@ -1,8 +1,7 @@
 const Trade = require("../models/trade");
 const { getPrice } = require("../services/livePrice.service");
 
-// Trade qty/price are stored as strings for precision. Always coerce explicitly
-// before doing arithmetic to avoid string concatenation and NaN propagation.
+
 function toNum(v, fallback = 0) {
   if (v == null) return fallback;
   // Support BSON Decimal128 (defensive)
@@ -40,7 +39,7 @@ exports.getPortfolio = async (req, res) => {
         };
       }
 
-      // Backward-compatible read: some older code used `quantity` while the schema uses `qty`
+      
       const qty = toNum(trade.qty ?? trade.quantity, 0);
       const price = toNum(trade.price, 0);
 

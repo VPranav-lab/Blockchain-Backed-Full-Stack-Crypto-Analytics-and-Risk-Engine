@@ -1,0 +1,55 @@
+@startuml E3-component-05-market-backtest-mvc
+title CryptoWeb - Market, News and Backtesting Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React views" {
+  component "MarketPage.jsx" as MarketView
+  component "News.jsx" as NewsView
+  component "StrategyPage.jsx" as BacktestView
+  component "watchlist/Watchlist.jsx" as WatchView
+}
+package "Frontend API modules" {
+  component "marketApi.js / newsApi.js" as MarketApi
+  component "backtestApi.js / watchlistApi.js" as UserApi
+}
+package "Server_3 HTTP handlers" {
+  component "market.controller.js" as MarketCtrl
+  component "news.routes.js" as NewsRoutes
+  component "backtest.controller.js" as BacktestCtrl
+  component "watchlist.controller.js" as WatchCtrl
+}
+package "Server_3 data / logic" {
+  component "Mongoose market / news models" as MarketModels
+  component "Backtest / Watchlist models" as Models
+  component "backtestSimulator.js" as Simulator
+}
+database "MongoDB" as Mongo
+
+MarketView --> MarketApi
+NewsView --> MarketApi
+BacktestView --> UserApi
+WatchView --> UserApi
+MarketApi --> MarketCtrl : market
+MarketApi --> NewsRoutes : news
+UserApi --> BacktestCtrl : backtest
+UserApi --> WatchCtrl : watchlist
+MarketCtrl --> MarketModels
+NewsRoutes --> MarketModels
+BacktestCtrl --> Simulator
+BacktestCtrl --> Models
+WatchCtrl --> Models
+MarketModels --> Mongo
+Models --> Mongo
+
+@enduml

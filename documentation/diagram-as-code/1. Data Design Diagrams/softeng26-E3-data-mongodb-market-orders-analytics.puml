@@ -1,0 +1,107 @@
+@startuml CryptoWeb---MongoDB-Market-Orders-and-Analytics
+title CryptoWeb - MongoDB Market Orders and Analytics
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 85
+skinparam ranksep 90
+skinparam defaultFontSize 13
+hide circle
+
+entity "MarketSymbol" as MS {
+  * _id : ObjectId <<PK>>
+  --
+  * symbol : String <<UQ>>
+  baseAsset : String
+  quoteAsset : String
+  enabled : Boolean
+}
+entity "candle" as C {
+  * _id : ObjectId <<PK>>
+  --
+  * symbol : String <<UQ triple>>
+  * interval : 1h|1d <<UQ triple>>
+  * timestamp : Number <<UQ triple>>
+  open, high, low, close : Number
+  volume : Number
+}
+entity "News" as N {
+  * _id : ObjectId <<PK>>
+  --
+  * url : String <<UQ>>
+  title : String
+  source : String
+  published_at : Date
+  category : String
+  sentiment : String
+  asset_sentiments : Array
+}
+entity "Backtest" as B {
+  * _id : ObjectId <<PK>>
+  --
+  * user_id : String
+  * symbol : String
+  strategy : ma_crossover
+  parameters : Object
+  date_range : Object
+  metrics : Object
+  equity_curve : Array
+  trades : Array
+}
+entity "Order" as O {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String <<UQ(user,ref)>>
+  * referenceId : String <<UQ(user,ref)>>
+  symbol : String
+  side : BUY|SELL
+  orderType : LIMIT|STOP
+  qty : String
+  price : String
+  status : String
+  fillId : Number
+  expectedPrice : String
+  maxSlippageBps : Number
+  ocoGroupId : String
+}
+entity "Trade" as T {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String <<UQ(user,ref)>>
+  * referenceId : String <<UQ(user,ref)>>
+  fillId : Number
+  walletTxId : Number
+  orderId : ObjectId <<ref Order>>
+  symbol : String
+  side : BUY|SELL
+  qty, price : String
+  status : String
+  source : MARKET|ORDER_EXECUTOR
+}
+entity "Watchlist" as WL {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String <<UQ(user,symbol)>>
+  * symbol : String <<UQ(user,symbol)>>
+}
+entity "SyncState" as SS {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String <<UQ>>
+  backfillCursorId : Number
+  lastRunAt : Date
+  lastError : String
+}
+MS .. C : symbol
+O |o--o| T : orderId
+note right of T
+  fillId and walletTxId refer to
+  Core MySQL record identifiers;
+  not MongoDB foreign keys.
+end note
+note bottom of WL
+  userId and user_id fields are logical
+  references to the Core account UUID.
+end note
+@enduml

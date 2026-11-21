@@ -1,0 +1,50 @@
+@startuml CryptoWeb-state-01-conditional-order
+title CryptoWeb - Conditional Order Lifecycle
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 65
+skinparam ranksep 65
+skinparam defaultFontSize 13
+skinparam StateFontSize 14
+skinparam ArrowFontSize 12
+hide empty description
+
+state "PENDING" as Pending
+state "PROCESSING" as Processing
+state "EXECUTED" as Executed
+state "FAILED" as Failed
+state "CANCELLED" as Cancelled
+
+[*] --> Pending : valid order created
+Pending --> Pending : edit price or quantity
+Pending --> Processing : market trigger reached / atomic claim
+Pending --> Cancelled : user cancels
+Pending --> Cancelled : linked OCO order executes
+
+Processing --> Executed : settlement and trade sync succeed
+Processing --> Failed : non-retryable business error
+Processing --> Pending : transient failure or missing acknowledgement
+Processing --> Pending : stale processing reset
+
+note left of Pending
+  Only PENDING orders are editable
+  and user-cancellable. The executor
+  checks for triggers periodically.
+end note
+
+note right of Processing
+  Execution uses the current market
+  price. The user-specified order
+  price is a trigger, not a guaranteed
+  execution price.
+end note
+
+note right of Executed
+  The corresponding trade is recorded
+  using the order reference. Immediate
+  market trades do not require an order.
+end note
+
+@enduml

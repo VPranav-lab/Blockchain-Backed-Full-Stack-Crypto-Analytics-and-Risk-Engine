@@ -1,0 +1,47 @@
+@startuml CryptoWeb-02-uc02-submit-kyc
+title CryptoWeb - UC02 - Submit Identity Verification
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Registered User|
+start
+:Open KYC page;
+|Core KYC Service|
+:Authenticate user and load KYC status;
+if (Already PENDING or APPROVED?) then (yes)
+  |Registered User|
+  :View current status;
+  stop
+else (no)
+  |Registered User|
+  :Enter personal and passport information;
+  if (Supporting document supplied?) then (yes)
+    :Upload document;
+    |Core KYC Service|
+    :Validate and store protected document;
+  endif
+  |Registered User|
+  :Submit KYC application;
+  |Core KYC Service|
+  :Validate fields and document number;
+  :Hash and encrypt passport number;
+  if (Valid, non-duplicate submission?) then (yes)
+    :Store application as PENDING in MySQL;
+    :Commit and log KYC_SUBMITTED event;
+    |Registered User|
+    :View pending review status;
+  else (no)
+    :Rollback, record failed submission;
+    |Registered User|
+    :View validation or duplicate-document error;
+  endif
+endif
+stop
+@enduml

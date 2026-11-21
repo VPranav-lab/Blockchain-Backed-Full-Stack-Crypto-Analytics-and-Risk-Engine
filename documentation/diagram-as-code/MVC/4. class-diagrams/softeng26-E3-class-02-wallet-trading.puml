@@ -1,0 +1,89 @@
+@startuml CryptoWeb-E3-mvc-wallettrading
+title CryptoWeb - Wallet and Market Trade Settlement (MVC view)
+
+!theme plain
+top to bottom direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 75
+skinparam ranksep 90
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 12
+hide circle
+
+
+package "React views and API clients" {
+  class "Trades" as TV <<React view>> {
+    +Trades()
+  }
+  class "Wallet" as WV <<React view>> {
+    +Wallet()
+  }
+  class "tradeApi" as TA <<API object>> {
+    +getTradeHistory()
+    +getUserHoldings()
+    +cancelOrder()
+  }
+  class "walletApi" as WA <<API object>> {
+    +getBalance()
+  }
+}
+
+package "Controllers and collaborators" {
+  class "Trade Controller (Server_3)" as STC <<controller module>> {
+    +posttrade()
+    +gettrades()
+  }
+  class "Core Gateway" as GW <<gateway module>> {
+    +executeUserTrade()
+  }
+  class "Trade Controller (Core)" as CTC <<controller module>> {
+    +execute()
+  }
+  class "Trade Service (Core)" as TS <<service module>> {
+    +buy()
+    +sell()
+  }
+  class "Wallet Controller (Core)" as WC <<controller module>> {
+    +balance()
+    +deposit()
+    +withdraw()
+  }
+}
+
+package "Data models" {
+  class "Trade document" as MT <<Mongoose model>> {
+    +referenceId
+    +orderId
+    +fillId
+    +price
+  }
+  class "TradeFill record" as F <<MySQL entity>> {
+    +id
+    +status
+    +wallet_tx_id
+  }
+  class "Wallet record" as W <<MySQL entity>> {
+    +id
+    +balance
+    +status
+  }
+}
+
+TV ..> TA
+WV ..> WA
+TA ..> STC : REST
+WA ..> WC : Core REST
+STC ..> GW
+STC ..> MT : synchronize
+GW ..> CTC : REST
+CTC ..> TS
+TS ..> F : SQL
+TS ..> W : SQL
+WC ..> W : SQL
+
+legend bottom
+The View and Model roles are identifiable; service modules remain part of the actual system.
+endlegend
+
+@enduml

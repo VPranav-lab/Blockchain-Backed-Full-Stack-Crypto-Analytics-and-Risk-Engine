@@ -1,0 +1,46 @@
+@startuml CryptoWeb-03-uc03-review-kyc
+title CryptoWeb - UC03 - Review Identity Verification
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Administrator|
+start
+:Open pending KYC applications;
+|Core KYC Service|
+:Authenticate and authorize administrator;
+if (Authorized?) then (no)
+  |Administrator|
+  :View access denied;
+  stop
+endif
+:Load pending application and document data;
+|Administrator|
+:Review evidence;
+:Choose APPROVE or REJECT with optional notes;
+|Core KYC Service|
+:Lock and check current application status;
+if (Application still PENDING?) then (no)
+  |Administrator|
+  :View missing/stale application error;
+  stop
+endif
+if (Approve?) then (yes)
+  :Set KYC status to APPROVED;
+  :Set wallet status to ACTIVE;
+else (no)
+  :Set KYC status to REJECTED;
+  :Keep wallet LOCKED;
+endif
+:Store reviewer and notes, commit MySQL transaction;
+:Log KYC decision event;
+|Administrator|
+:View recorded decision;
+stop
+@enduml

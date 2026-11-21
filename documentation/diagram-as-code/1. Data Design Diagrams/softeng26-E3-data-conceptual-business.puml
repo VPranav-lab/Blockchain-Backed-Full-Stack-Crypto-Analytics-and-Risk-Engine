@@ -1,0 +1,104 @@
+
+@startuml CryptoWeb-Conceptual-Business-Data
+
+title CryptoWeb - Conceptual Business Data Model
+
+!theme plain
+left to right direction
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 110
+skinparam defaultFontSize 13
+
+hide circle
+
+entity "User" as User {
+  * userId
+  --
+  accountStatus
+}
+
+entity "KYC Application" as KYC {
+  * applicationId
+  --
+  status
+}
+
+entity "Wallet" as Wallet {
+  * walletId
+  --
+  userId
+  balance
+  status
+}
+
+entity "Wallet Transaction" as WalletTx {
+  * transactionId
+  --
+  userId
+  type
+  amount
+}
+
+entity "Portfolio Holding" as Holding {
+  * holdingId
+  --
+  symbol
+  quantity
+}
+
+entity "Conditional Order" as Order {
+  * orderId
+  --
+  symbol
+  orderType
+  side
+  triggerPrice
+  quantity
+  status
+}
+
+entity "Executed Trade" as Fill {
+  * tradeId
+  --
+  symbol
+  side
+  quantity
+}
+
+entity "Watchlist Entry" as Watch {
+  * entryId
+  --
+  symbol
+}
+
+' User relationships
+User ||--o| KYC : submits
+User ||--o| Wallet : owns
+User ||--o{ WalletTx : records
+User ||--o{ Holding : holds
+User ||--o{ Order : places
+User ||--o{ Fill : executes
+User ||--o{ Watch : saves
+
+' Logical order-to-trade relationship
+Order |o..o| Fill : may produce
+
+' SQL settlement reference
+WalletTx |o--o{ Fill : settlement
+
+note bottom of Order
+  An order may execute into a trade.
+  Order-to-trade cardinality is not
+  enforced by a MongoDB unique index.
+end note
+
+note bottom of WalletTx
+  Wallet transactions reference users.
+  There is no wallet_id foreign key
+  in the wallet_transactions table.
+end note
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml E3-component-06-risk-ml-alerts-mvc
+title CryptoWeb - Risk, ML and Alert Components (MVC)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React views" {
+  component "portfolio/Portfolio.jsx\nRiskDashboard.jsx" as RiskView
+  component "Insights.jsx" as MLView
+  component "AlertsCenter.jsx" as AlertsView
+}
+package "Frontend API modules" {
+  component "portfolioApi.js" as RiskApi
+  component "mlApi.js" as MLApi
+  component "alertApi.js" as AlertsApi
+}
+package "Server_3 controller / model" {
+  component "portfolioRisk.controller.js" as RiskCtrl
+  component "portfolioRisk.service.js" as RiskSvc
+  component "Trade / Candle / News models" as RiskModels
+}
+package "Core controllers and services" {
+  component "ml.controller.js + ml.service.js" as CoreML
+  component "alerts.controller.js + alerts.service.js" as CoreAlerts
+}
+component "FastAPI ML service" as ML
+
+database "MongoDB" as Mongo
+
+RiskView --> RiskApi
+MLView --> MLApi
+AlertsView --> AlertsApi
+RiskApi --> RiskCtrl : risk REST
+RiskCtrl --> RiskSvc
+RiskSvc --> RiskModels
+RiskModels --> Mongo
+MLApi --> CoreML : prediction REST
+CoreML --> ML : internal HTTP
+CoreML --> Mongo
+AlertsApi --> CoreAlerts : alerts REST
+CoreAlerts --> Mongo
+
+@enduml

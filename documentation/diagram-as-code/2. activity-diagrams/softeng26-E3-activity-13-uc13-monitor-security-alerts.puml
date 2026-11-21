@@ -1,0 +1,47 @@
+@startuml CryptoWeb-13-uc13-monitor-security-alerts
+title CryptoWeb - UC13 - Monitor Security Alerts
+
+!theme plain
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultFontSize 13
+skinparam activityFontSize 13
+skinparam ArrowFontSize 12
+skinparam nodesep 45
+skinparam ranksep 45
+
+|Administrator|
+start
+:Open security alert monitoring;
+|Core Alerts Service|
+:Authenticate and require administrator role;
+if (Authorized?) then (no)
+  |Administrator|
+  :View access denied;
+  stop
+endif
+:List alerts using status/time/user filters;
+if (Matching alerts exist?) then (no)
+  |Administrator|
+  :View no matching alerts;
+  stop
+endif
+|Administrator|
+:Inspect alert details and linked signals;
+:Review session-risk/anomaly indicators;
+if (Change alert status?) then (yes)
+  :Choose an allowed status action;
+  |Core Alerts Service|
+  :Apply permitted status update;
+  note right
+    Status update endpoint is scoped
+    to the authenticated user's alerts.
+    Admin may inspect alerts globally,
+    but cannot use it to patch another
+    user's alert without ownership.
+  end note
+endif
+|Administrator|
+:View updated/available alert information;
+stop
+@enduml

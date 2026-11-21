@@ -1,0 +1,70 @@
+@startuml CryptoWeb---MongoDB-Predictions-Signals-and-Alerts
+title CryptoWeb - MongoDB Predictions Signals and Alerts
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 85
+skinparam ranksep 90
+skinparam defaultFontSize 13
+hide circle
+
+entity "ml_predictions" as P {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String
+  createdAt : Date
+  requestId : String
+  latencyMs : Number
+  input : Object
+  model : String
+  output : Object
+}
+entity "signals_ml" as ML {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String
+  signalType : PRICE_PREDICTION
+  predictionId : ObjectId|String
+  requestId : String
+  model : String
+  items : Array
+  createdAt : Date
+}
+entity "signals_security" as S {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String
+  signalType : SESSION_RISK
+  risk : Number
+  action : String
+  sessionId : String
+  factors : Array
+  createdAt : Date
+}
+entity "alerts" as A {
+  * _id : ObjectId <<PK>>
+  --
+  * userId : String <<UQ triple>>
+  * bucket : String <<UQ triple>>
+  * dedupeKey : String <<UQ triple>>
+  type : SECURITY|ML
+  title : String
+  score : Number
+  status : OPEN|ACK|CLOSED
+  sources : Array
+  explain : Object
+  createdAt : Date
+}
+P .. ML : predictionId
+ML .. A : referenced in sources
+S .. A : referenced in sources
+note bottom of A
+  Alert sources are embedded references;
+  these links are not database FKs.
+end note
+note right of ML
+  predictionId may be an ObjectId or
+  string, depending on the writer.
+end note
+@enduml

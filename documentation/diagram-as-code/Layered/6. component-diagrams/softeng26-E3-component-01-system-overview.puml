@@ -1,0 +1,52 @@
+@startuml E3-component-01-system-overview-layered
+title CryptoWeb - System Components (LAYERED)
+
+!theme plain
+left to right direction
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 110
+skinparam ranksep 120
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontSize 12
+skinparam ArrowFontSize 11
+hide stereotype
+
+package "React SPA" {
+  component "Pages / dashboards" as Pages
+  component "API client modules" as Clients
+}
+package "Server_3 Express :4000" {
+  component "HTTP routes / controllers" as S3Http
+  component "Market / trading services" as S3Logic
+}
+package "Core Express :5000" {
+  component "HTTP routes / controllers" as CoreHttp
+  component "Auth / settlement / ledger services" as CoreLogic
+}
+component "FastAPI ML service :8000" as ML
+
+database "MongoDB" as Mongo
+database "MySQL" as SQL
+cloud "Market / news providers" as Providers
+
+Pages --> Clients
+Clients --> S3Http : market / trading
+Clients --> CoreHttp : identity / wallet
+S3Http --> S3Logic
+S3Logic --> CoreHttp : internal REST
+CoreHttp --> CoreLogic
+CoreLogic --> ML : ML requests
+ML ..> S3Http : feature data
+S3Logic --> Mongo
+S3Logic --> Providers : ingest
+CoreLogic --> SQL
+CoreLogic --> Mongo : ledger / alerts
+
+legend bottom
+Solid arrows: component calls or data access.
+Dashed arrows: service-to-service data retrieval.
+endlegend
+
+@enduml
